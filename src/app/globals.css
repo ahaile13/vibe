@@ -5,7 +5,7 @@
   /* skyline */
   --sky-top: #0c1215; --sky-haze: #2a3a40; --sky-back: #1f2c31; --sky-mid: #131c20; --sky-face: #24343a;
   --sky-front: #0b0f11; --sky-line: #3a4c52; --sky-gap: #2a3a40; --sky-win: #f0d9ad; --sky-mist: #a3b6bd;
-  --sky-mtn: #1a262b; --sky-snow: #c9d6db;
+  --sky-mtn: #1a262b; --sky-snow: #c9d6db; --sky-gg: #8a4634; --sky-bridge: #3e5870;
   --bg: #0b0f11;
   --bg2: #121a1d;
   --bg3: #192327;
@@ -113,7 +113,9 @@ main.page { min-height: 100dvh; padding: 20px 20px 132px; max-width: 1220px; mar
     linear-gradient(180deg, var(--sky-front) 0%, var(--bg) 100%); }
 /* city lights: some windows twinkle, street lights breathe */
 .skyline .tw { animation: twinkle 4s ease-in-out infinite; }
-@keyframes twinkle { 0%, 100% { opacity: 0.12; } 45% { opacity: 1; } 60% { opacity: 0.85; } }
+@keyframes twinkle { 0%, 100% { opacity: 0.08; } 40% { opacity: 1; } 55% { opacity: 0.9; } 70% { opacity: 0.25; } }
+.skyline .blink { animation: blink 2.2s steps(1, end) infinite; }
+@keyframes blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.08; } }
 .skyline .glow { animation: glow 7s ease-in-out infinite; }
 @keyframes glow { 50% { opacity: 0.12; } }
 @media (min-width: 900px) { .backdrop { left: var(--side); } }
