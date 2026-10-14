@@ -59,7 +59,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 export function SetupNotice() {
-  const { status } = useLive();
+  const { status, loadError } = useLive();
   if (status === 'unconfigured')
     return (
       <div className="notice" role="status">
@@ -74,7 +74,12 @@ export function SetupNotice() {
     return (
       <div className="notice" role="alert">
         <Icon name="flag" />
-        <span>Couldn’t load events. Check your connection, or that the database migration has been run.</span>
+        <span>
+          {loadError && /does not exist|schema cache|relation/i.test(loadError)
+            ? 'The database is connected but empty. Run supabase/migrations/20261012000000_init.sql, then supabase/seed.sql, in the Supabase SQL Editor.'
+            : 'Couldn’t load events. Check your connection.'}
+          {loadError && <><br /><code>{loadError}</code></>}
+        </span>
       </div>
     );
   return null;

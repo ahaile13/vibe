@@ -32,6 +32,7 @@ type LoadStatus = 'loading' | 'ready' | 'error' | 'unconfigured';
 
 interface LiveValue {
   status: LoadStatus;
+  loadError: string | null;
   authReady: boolean;
   user: User | null;
   profile: Profile | null;
@@ -100,6 +101,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [status, setStatus] = useState<LoadStatus>(supabaseConfigured ? 'loading' : 'unconfigured');
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [authReady, setAuthReady] = useState(!supabaseConfigured);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -163,6 +165,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       .gt('ends_at', iso(-12 * H)).lt('starts_at', iso(8 * 24 * H))
       .order('starts_at').limit(400);
     if (error) {
+      setLoadError(error.message);
       setStatus((s) => (s === 'ready' ? 'ready' : 'error'));
       return;
     }
@@ -200,6 +203,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
         return out;
       });
     }
+    setLoadError(null);
     setStatus('ready');
   }, []);
 
@@ -482,7 +486,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   }
 
   const value: LiveValue = {
-    status, authReady, user, profile, setProfile,
+    status, loadError, authReady, user, profile, setProfile,
     events, eventById, stats, rows, comments, posts, now, userLoc, dist,
     saved, myRatings, helped,
     reload, refreshEvent, fetchEvent, addEvent,

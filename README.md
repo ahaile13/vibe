@@ -28,7 +28,11 @@ In Supabase → **Authentication → URL Configuration**:
 - **Site URL:** your Vercel address, e.g. `https://vibe-ahaile13.vercel.app`
 - **Redirect URLs:** add the same address followed by `/auth/callback`
 
-Email sign-in then works. Google and Apple are optional, under **Authentication → Providers**.
+Then turn off email confirmation so people can sign up with a password instantly (Supabase's free email only sends 2 messages an hour, and only to your Supabase team):
+
+- **Authentication → Sign In / Providers → Email** → switch **Confirm email** off → **Save**
+
+Email + password sign-in then works for anyone. The "email me a link" option needs a custom email sender (Authentication → Emails → SMTP, e.g. Resend's free tier) before it works for the public. Google and Apple are optional, under **Authentication → Sign In / Providers**.
 
 ### 4. Try it
 
