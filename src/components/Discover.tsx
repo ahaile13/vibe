@@ -13,6 +13,7 @@ import { isActive } from '@/lib/scoring';
 import { fmtMi } from '@/lib/geo';
 import { CITY } from '@/lib/city';
 import { Skyline } from './Skyline';
+import { Wordmark } from './Logo';
 import type { EventRow } from '@/lib/types';
 
 type When = 'now' | 'tonight' | 'weekend';
@@ -67,7 +68,7 @@ export function Discover() {
         <div className="hero-in">
         <div className="top">
           <div>
-            <h1 className="where">Where’s the vibe?</h1>
+            <h1 className="where">Where’s the <Wordmark text="vibe" />?</h1>
             <div className="live-line">
               <span className="livedot" />
               Live in {CITY.name}{userLoc ? '' : ', distances from Downtown'}

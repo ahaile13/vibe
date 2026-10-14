@@ -69,6 +69,8 @@ a { color: inherit; text-decoration: none; }
 .side { position: fixed; inset: 0 auto 0 0; width: var(--side); padding: calc(28px + env(safe-area-inset-top, 0px)) 20px 28px; border-right: 1px solid var(--line); display: none; flex-direction: column; gap: 2px; background: var(--bg); z-index: 30; }
 .logo { display: inline-block; margin: 0 0 30px 10px; color: var(--text); }
 .wm { font-family: var(--font-head); font-weight: 600; letter-spacing: -0.035em; line-height: 1; display: inline-flex; align-items: baseline; }
+.where .wm { line-height: inherit; }
+.where .wm-i b { top: 0.1em; }
 .wm-i { position: relative; display: inline-block; }
 .wm-i b { position: absolute; left: 50%; top: -0.02em; width: 0.17em; height: 0.17em; margin-left: -0.085em; border-radius: 50%; background: var(--accent); animation: breathe 3.2s ease-in-out infinite; }
 @keyframes breathe { 50% { opacity: 0.55; } }
@@ -82,8 +84,13 @@ main.page { min-height: 100dvh; padding: 20px 20px 132px; max-width: 1220px; mar
 .bnav { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; margin-bottom: calc(14px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 6px; padding: 8px; border-radius: 999px; z-index: 40; }
 .bnav a { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; color: var(--muted); transition: color 0.2s, background 0.2s; }
 .bnav a[aria-current='page'] { color: var(--text); background: rgba(255, 255, 255, 0.08); }
-.plus { width: 52px; height: 52px; margin: 0 4px; border-radius: 50%; display: grid; place-items: center; color: var(--accent-ink); background: var(--accent); box-shadow: 0 6px 20px rgba(230, 207, 164, 0.18); }
-.plus .ic { width: 22px; height: 22px; stroke-width: 2; }
+.plus { width: 56px; height: 56px; margin: 0 4px; border-radius: 18px; display: grid; place-items: center; color: var(--text);
+  background: radial-gradient(120% 90% at 30% 0%, #2a3a40 0%, #121a1d 55%, #0b0f11 100%);
+  border: 1px solid rgba(230, 207, 164, 0.35); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 22px rgba(0, 0, 0, 0.45); transition: transform 0.2s var(--ease); }
+.plus:active { transform: scale(0.94); }
+/* app icon mark: proportions match the 512px icon */
+.mark { position: relative; display: block; width: 100%; height: 100%; font: 600 41px/56px var(--font-head); letter-spacing: -0.04em; text-align: center; margin-left: -3px; margin-top: -3px; }
+.mark b { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); right: 9px; top: 13px; animation: breathe 3.2s ease-in-out infinite; }
 @media (min-width: 900px) {
   .side { display: flex; } .bnav { display: none; }
   main.page { margin-left: var(--side); padding: 36px 44px 64px; max-width: calc(1220px + var(--side)); }

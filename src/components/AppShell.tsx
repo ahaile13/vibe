@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { Icon, type IconName } from './Icon';
 import { useLive } from './LiveProvider';
 import { Layers } from './Layers';
-import { Logo } from './Logo';
+import { Logo, Mark } from './Logo';
 
 const SIDE: [string, string, IconName][] = [
   ['/', 'Discover', 'compass'],
@@ -48,7 +48,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <nav className="bnav glass" aria-label="Main">
           <Link href="/" aria-label="Discover" aria-current={current('/') ? 'page' : undefined}><Icon name="compass" /></Link>
           <Link href="/map" aria-label="Map" aria-current={current('/map') ? 'page' : undefined}><Icon name="map" /></Link>
-          <button className="plus" onClick={() => openCapture()} aria-label="Capture the vibe"><Icon name="plus" /></button>
+          <button className="plus" onClick={() => openCapture()} aria-label="Capture the vibe"><Mark /></button>
           <Link href="/trending" aria-label="Trending" aria-current={current('/trending') ? 'page' : undefined}><Icon name="trend" /></Link>
           <Link href="/profile" aria-label="Profile" aria-current={current('/profile') ? 'page' : undefined}><Icon name="user" /></Link>
         </nav>
