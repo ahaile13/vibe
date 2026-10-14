@@ -14,7 +14,7 @@ export const metadata: Metadata = {
       (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000'),
   ),
   title: { default: 'vibes', template: '%s | vibes' },
-  description: 'Live, location-verified ratings of what’s popping in Dallas right now.',
+  description: 'Live, location-verified ratings of what’s popping in your city right now.',
   applicationName: 'vibes',
   appleWebApp: { capable: true, title: 'vibes', statusBarStyle: 'black-translucent' },
 };

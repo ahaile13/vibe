@@ -5,7 +5,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
 import { getSupabase, supabaseConfigured } from '@/lib/supabase/client';
 import { computeStats, isActive, rankAll, type Stats } from '@/lib/scoring';
-import { DALLAS, distanceMi, getFix, type Fix } from '@/lib/geo';
+import { distanceMi, getFix, type Fix } from '@/lib/geo';
+import { CITIES, CITY_LIST, DEFAULT_CITY, type City } from '@/lib/city';
+
+const CITY_KEY = 'vibes.city';
+/** Events farther than this from the selected city's center belong to another city. */
+const CITY_RADIUS_MI = 60;
 import { errorText, parseVibeError } from '@/lib/errors';
 import {
   COMMENT_COLS, EVENT_COLS, POST_COLS,
@@ -21,6 +26,7 @@ export type Sheet =
   | { kind: 'create' }
   | { kind: 'report'; target: 'comment' | 'post'; id: string; userId: string; username: string }
   | { kind: 'lightbox'; post: PostRow }
+  | { kind: 'city' }
   | null;
 
 export type Modal =
@@ -38,6 +44,8 @@ interface LiveValue {
   profile: Profile | null;
   setProfile: (p: Profile) => void;
   events: EventRow[];
+  city: City;
+  chooseCity: (id: string) => void;
   eventById: (id: string) => EventRow | undefined;
   stats: Record<string, Stats>;
   rows: Record<string, RatingRow[]>;
@@ -115,6 +123,43 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   const [helped, setHelped] = useState<Set<string>>(new Set());
   const [now, setNow] = useState(() => Date.now());
   const [userLoc, setUserLoc] = useState<LatLng | null>(null);
+  const [city, setCity] = useState<City>(DEFAULT_CITY);
+  const cityChosen = useRef(false);
+
+  useEffect(() => {
+    try {
+      const id = localStorage.getItem(CITY_KEY);
+      if (id && CITIES[id]) {
+        setCity(CITIES[id]);
+        cityChosen.current = true;
+      }
+    } catch {
+      /* storage unavailable: stay on the default city */
+    }
+  }, []);
+
+  const chooseCity = useCallback((id: string) => {
+    const c = CITIES[id];
+    if (!c) return;
+    setCity(c);
+    cityChosen.current = true;
+    try {
+      localStorage.setItem(CITY_KEY, id);
+    } catch {
+      /* not saved; still switches for this visit */
+    }
+  }, []);
+
+  /** First location fix picks the nearest supported city, unless the person already chose one. */
+  const adoptNearestCity = useCallback((p: LatLng) => {
+    if (cityChosen.current) return;
+    let best: City | null = null, bestMi = 80;
+    for (const c of CITY_LIST) {
+      const d = distanceMi(p, c.center);
+      if (d < bestMi) { best = c; bestMi = d; }
+    }
+    if (best) setCity(best);
+  }, []);
   const [sheet, setSheet] = useState<Sheet>(null);
   const [modal, setModal] = useState<Modal>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -308,8 +353,8 @@ export function LiveProvider({ children }: { children: ReactNode }) {
 
   // ------------------------------------------------------------ derived
   const dist = useCallback(
-    (e: EventRow) => (e.lat == null || e.lng == null ? null : distanceMi(userLoc ?? DALLAS, { lat: e.lat, lng: e.lng })),
-    [userLoc],
+    (e: EventRow) => (e.lat == null || e.lng == null ? null : distanceMi(userLoc ?? city.center, { lat: e.lat, lng: e.lng })),
+    [userLoc, city],
   );
 
   const stats = useMemo(() => {
@@ -334,6 +379,17 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   }, [rawPosts, blocked]);
 
   const eventById = useCallback((id: string) => events.find((e) => e.id === id), [events]);
+
+  // Events in the selected city. Detail pages still open any event by id.
+  const cityEvents = useMemo(
+    () =>
+      events.filter(
+        (e) =>
+          e.lat == null || e.lng == null || e.created_by === user?.id ||
+          distanceMi(city.center, { lat: e.lat, lng: e.lng }) <= CITY_RADIUS_MI,
+      ),
+    [events, city, user],
+  );
 
   // ------------------------------------------------------------ actions
   function requireLogin() {
@@ -360,6 +416,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       return null;
     }
     setUserLoc({ lat: fix.lat, lng: fix.lng });
+    adoptNearestCity({ lat: fix.lat, lng: fix.lng });
     const { data, error } = await sb.rpc('verify_presence', {
       p_event: ev.id, p_lat: fix.lat, p_lng: fix.lng, p_accuracy: fix.accuracy,
     });
@@ -459,9 +516,10 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     try {
       const f = await getFix();
       setUserLoc({ lat: f.lat, lng: f.lng });
+      adoptNearestCity({ lat: f.lat, lng: f.lng });
       if (!quiet) toast('Distances now use your location');
     } catch (err) {
-      if (!quiet) toast(err === 'denied' ? 'Location is off for this site. Distances use Downtown Dallas.' : 'Couldn’t get a location fix.');
+      if (!quiet) toast(err === 'denied' ? `Location is off for this site. Distances use downtown ${city.name}.` : 'Couldn’t get a location fix.');
     }
   }
 
@@ -487,7 +545,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
 
   const value: LiveValue = {
     status, loadError, authReady, user, profile, setProfile,
-    events, eventById, stats, rows, comments, posts, now, userLoc, dist,
+    events: cityEvents, city, chooseCity, eventById, stats, rows, comments, posts, now, userLoc, dist,
     saved, myRatings, helped,
     reload, refreshEvent, fetchEvent, addEvent,
     requireLogin, verify, startRate, openCapture, openCreate,

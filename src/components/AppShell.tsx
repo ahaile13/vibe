@@ -6,6 +6,7 @@ import { Icon, type IconName } from './Icon';
 import { useLive } from './LiveProvider';
 import { Layers } from './Layers';
 import { Logo, Mark } from './Logo';
+import { Skyline } from './Skyline';
 
 const SIDE: [string, string, IconName][] = [
   ['/', 'Discover', 'compass'],
@@ -18,7 +19,7 @@ const SIDE: [string, string, IconName][] = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const path = usePathname();
-  const { openCapture } = useLive();
+  const { openCapture, city } = useLive();
   const current = (href: string) => {
     const base = href.split(/[?#]/)[0];
     if (href.includes('?') || href.includes('#')) return false;
@@ -27,6 +28,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isAuth = path.startsWith('/login');
   return (
     <>
+      <div className="backdrop" aria-hidden="true">
+        <Skyline key={city.id} city={city} />
+      </div>
       {!isAuth && (
         <nav className="side" aria-label="Main">
           <Logo size={34} />

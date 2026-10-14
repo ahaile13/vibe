@@ -5,6 +5,7 @@
   /* skyline */
   --sky-top: #0c1215; --sky-haze: #2a3a40; --sky-back: #1f2c31; --sky-mid: #131c20; --sky-face: #24343a;
   --sky-front: #0b0f11; --sky-line: #3a4c52; --sky-gap: #2a3a40; --sky-win: #f0d9ad; --sky-mist: #a3b6bd;
+  --sky-mtn: #1a262b; --sky-snow: #c9d6db;
   --bg: #0b0f11;
   --bg2: #121a1d;
   --bg3: #192327;
@@ -36,7 +37,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { background: var(--bg); -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0; color: var(--text); background: var(--bg);
+  margin: 0; color: var(--text); background: transparent;
   font: 500 15px/1.5 var(--font-body);
   font-feature-settings: 'tnum' 1;
   -webkit-font-smoothing: antialiased; overflow-x: hidden;
@@ -97,12 +98,24 @@ main.page { min-height: 100dvh; padding: 20px 20px 132px; max-width: 1220px; mar
 }
 
 /* ---------------------------------------------------------------- discover */
-.hero { position: relative; margin: -20px -20px 10px; padding: 26px 20px 0; min-height: 420px; display: flex; overflow: hidden; isolation: isolate;
-  background: linear-gradient(180deg, var(--bg) 0%, var(--sky-top) 40%); }
-.hero .skyline { position: absolute; left: 0; bottom: 0; width: 100%; height: 56%; z-index: -1; }
-.hero-in { display: flex; flex-direction: column; justify-content: space-between; width: 100%; }
-.hero .pulse { margin: 0 0 18px; color: rgba(243, 241, 236, 0.75); text-shadow: 0 1px 12px rgba(11, 15, 17, 0.9); }
-@media (min-width: 900px) { .hero { margin: -36px -44px 14px; padding: 40px 44px 0; min-height: 460px; } .hero .skyline { height: 78%; } }
+/* constant city backdrop: fixed behind every screen, content scrolls over it */
+.backdrop { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--sky-top) 30%, var(--sky-haze) 62%, var(--bg) 100%); }
+/* height tracks width so a city's landmarks (drawn between x 380 and 1080) stay in frame on phones */
+.backdrop .skyline { position: absolute; left: 0; bottom: 0; width: 100%; height: clamp(240px, 66vw, 62vh); animation: skyin 0.9s var(--ease); }
+@keyframes skyin { from { opacity: 0; } }
+@media (min-width: 900px) { .backdrop { left: var(--side); } }
+.hero { margin: 0 0 6px; }
+.hero-in { display: flex; flex-direction: column; gap: 18px; }
+.hero .pulse { margin: 0 0 8px; color: rgba(243, 241, 236, 0.78); text-shadow: 0 1px 14px rgba(11, 15, 17, 0.95); }
+.citybtn { display: inline-flex; align-items: center; gap: 6px; color: var(--text); font-weight: 600; padding: 2px 0; }
+.citybtn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.live-line .dim { color: var(--dim); margin-left: 6px; }
+.citylist { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cityopt { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--line2); background: rgba(255, 255, 255, 0.03); text-align: left; font-weight: 600; }
+.cityopt small { color: var(--dim); font-weight: 500; }
+.cityopt[aria-selected='true'] { border-color: var(--accent); background: rgba(230, 207, 164, 0.1); }
+.cityopt[aria-selected='true'] small { color: var(--accent); }
 .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin: 6px 0 14px; }
 .where, .ttl, .dhero h1, .auth h1, .empty h3, .sheet h2, .modal h2, .sec h2 {
   font-family: var(--font-head), sans-serif; font-weight: 600; letter-spacing: -0.025em;
@@ -363,10 +376,9 @@ table.w { width: 100%; border-collapse: collapse; font-size: 14px; }
 table.w td { padding: 9px 0; border-top: 1px solid var(--line); }
 table.w tr:first-child td { border-top: 0; }
 table.w td:last-child { text-align: right; color: var(--muted); }
-.auth { max-width: 400px; margin: 7vh auto 0; position: relative; z-index: 1; }
+.auth { max-width: 400px; margin: 7vh auto 0; }
 .auth .logo { margin: 0 0 26px; }
-.auth-bg { position: fixed; left: 0; bottom: 0; width: 100%; height: 40vh; z-index: -1; pointer-events: none; opacity: 0.85;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 35%); mask-image: linear-gradient(180deg, transparent 0, #000 35%); }
+
 .auth h1 { font-size: 40px; line-height: 1.05; margin: 0 0 10px; }
 .auth > p { color: var(--muted); margin: 0 0 24px; }
 .auth form { display: grid; gap: 10px; }

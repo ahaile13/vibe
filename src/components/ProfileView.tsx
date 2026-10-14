@@ -17,7 +17,7 @@ const VIBE_LABEL = { popping: '🔥 Popping', mid: '😐 Mid', dead: '💀 Dead'
 
 export function ProfileView() {
   const router = useRouter();
-  const { user, authReady, profile, setProfile, saved, myRatings, stats, events, now, userLoc, locate, openCreate, toast, status } = useLive();
+  const { user, authReady, profile, setProfile, saved, myRatings, stats, events, now, userLoc, locate, openCreate, toast, status, city, setSheet } = useLive();
   const [counts, setCounts] = useState({ comments: 0, posts: 0 });
   const [extra, setExtra] = useState<EventRow[]>([]);
   const [editing, setEditing] = useState(false);
@@ -100,7 +100,7 @@ export function ProfileView() {
           ) : (
             <div className="fh" style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-.02em' }}>@{handle}</div>
           )}
-          <div style={{ color: 'var(--muted)', fontSize: 13.5 }}>{profile?.home_city ?? 'Dallas, TX'}</div>
+          <div style={{ color: 'var(--muted)', fontSize: 13.5 }}>{`${city.name}, ${city.state}`}</div>
           {!editing && <button className="linkb" style={{ padding: '4px 0' }} onClick={() => { setName(handle); setEditing(true); }}>Change username</button>}
         </div>
       </div>
@@ -129,9 +129,10 @@ export function ProfileView() {
         </section>
         <section className="panel">
           <h2>Location</h2>
-          <p style={{ margin: '0 0 12px', fontSize: 14 }}>{userLoc ? 'Distances use your location.' : 'Distances are measured from Downtown Dallas.'}</p>
+          <p style={{ margin: '0 0 12px', fontSize: 14 }}>{userLoc ? 'Distances use your location.' : `Distances are measured from downtown ${city.name}.`}</p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button className="btn gl" onClick={() => locate(false)}><Icon name="locate" />Use my location</button>
+            <button className="btn gl" onClick={() => setSheet({ kind: 'city' })}><Icon name="map" />City: {city.name}</button>
             <button className="btn gl" onClick={openCreate}><Icon name="plus" />Create an event</button>
           </div>
           <p className="foot-note">Location is checked once each time you rate or post, never tracked in the background, and never shown to anyone.</p>

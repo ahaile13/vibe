@@ -7,7 +7,7 @@ import { isActive } from '@/lib/scoring';
 import type { EventRow } from '@/lib/types';
 
 export function Trending() {
-  const { events, stats, now, dist, saved, userLoc, status } = useLive();
+  const { events, stats, now, dist, saved, userLoc, status, city } = useLive();
   const pub = events.filter((e) => e.visibility === 'public');
   const live = pub.filter((e) => isActive(e, now));
   const sure = live.filter((e) => stats[e.id].conf !== 'none');
@@ -21,7 +21,7 @@ export function Trending() {
       pub.filter((e) => Date.parse(e.ends_at) > now && e.save_count + (saved.has(e.id) ? 1 : 0) > 0)
         .sort((a, b) => b.save_count - a.save_count).slice(0, 8)],
     ['Cooling down', 'Recent ratings point to fading energy.', live.filter((e) => stats[e.id].mom === 'down')],
-    ['Near you', userLoc ? 'Closest live spots to you.' : 'Closest to Downtown Dallas. Turn on location in Profile for real distances.',
+    ['Near you', userLoc ? 'Closest live spots to you.' : `Closest to downtown ${city.name}. Turn on location in Profile for real distances.`,
       [...live].sort((a, b) => (dist(a) ?? 99) - (dist(b) ?? 99)).slice(0, 8)],
   ];
   const shown = sections.filter(([, , l]) => l.length);

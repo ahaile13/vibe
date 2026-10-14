@@ -10,7 +10,7 @@ import { Cover } from './Media';
 import { StatusPill, WorthText, topComment } from './bits';
 import { SetupNotice } from './AppShell';
 import { isActive } from '@/lib/scoring';
-import { DALLAS, fmtMi } from '@/lib/geo';
+import { fmtMi } from '@/lib/geo';
 import type { EventRow } from '@/lib/types';
 
 // Free dark basemap, no API key. Swap via NEXT_PUBLIC_MAP_STYLE (e.g. a Mapbox or MapTiler style URL).
@@ -23,7 +23,7 @@ const FILTERS: [string, string][] = [
 
 export function MapView() {
   const router = useRouter();
-  const { events, stats, now, dist, posts, comments, userLoc, locate } = useLive();
+  const { events, stats, now, dist, posts, comments, userLoc, locate, city } = useLive();
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<MLMap | null>(null);
   const markers = useRef<Map<string, Marker>>(new Map());
@@ -58,7 +58,7 @@ export function MapView() {
         const m = new ml.Map({
           container: box.current,
           style: STYLE,
-          center: [DALLAS.lng, DALLAS.lat + 0.012],
+          center: [city.center.lng, city.center.lat + 0.012],
           zoom: 12.2,
           attributionControl: { compact: true },
         });
@@ -107,6 +107,13 @@ export function MapView() {
       el.setAttribute('aria-label', `${e.name}`);
     }
   }, [list, stats, now, ready, sel]);
+
+  // follow the selected city
+  useEffect(() => {
+    const m = map.current;
+    if (m && ready && !userLoc) m.easeTo({ center: [city.center.lng, city.center.lat + 0.012], zoom: 12.2 });
+    setSel(null);
+  }, [city, ready, userLoc]);
 
   // you-are-here dot
   useEffect(() => {

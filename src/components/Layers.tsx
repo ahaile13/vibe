@@ -11,6 +11,7 @@ import { directionsUrl, fmtMi, getFix } from '@/lib/geo';
 import { isActive } from '@/lib/scoring';
 import { ago, clock } from '@/lib/format';
 import { MediaError, preparePhoto, prepareVideo, videoExt, type Prepared } from '@/lib/media';
+import { CITY_LIST } from '@/lib/city';
 import { CATEGORIES, EVENT_COLS, type Category, type EventRow, type VibeLevel } from '@/lib/types';
 
 export function Layers() {
@@ -33,6 +34,7 @@ export function Layers() {
       {sheet?.kind === 'create' && <CreateSheet />}
       {sheet?.kind === 'report' && <ReportSheet {...sheet} />}
       {sheet?.kind === 'lightbox' && <Lightbox />}
+      {sheet?.kind === 'city' && <CitySheet />}
       {modal && <GateModal />}
       {toastMsg && (
         <div className="toast glass" role="status">
@@ -474,6 +476,36 @@ function Lightbox() {
         <b>@{name}</b> <span className="time">posted {ago(now - Date.parse(p.created_at))}, {clock(p.created_at)}</span>
         {p.caption && <p style={{ margin: '6px 0 0' }}>{p.caption}</p>}
         <button className="linkb" style={{ paddingLeft: 0 }} onClick={() => openReport('post', p.id, p.user_id, name)}>Report</button>
+      </div>
+    </div>
+  );
+}
+
+// ------------------------------------------------------------------ city
+function CitySheet() {
+  const { city, chooseCity, setSheet, toast } = useLive();
+  return (
+    <div className="sheet glass" role="dialog" aria-modal="true" aria-labelledby="city-h">
+      <div className="grab" />
+      <h2 id="city-h">Choose your city</h2>
+      <p className="sub">Changes the skyline and which events you see. Sharing your location picks the nearest city for you.</p>
+      <div className="citylist" role="listbox" aria-label="Cities">
+        {CITY_LIST.map((c) => (
+          <button
+            key={c.id}
+            role="option"
+            aria-selected={c.id === city.id}
+            className="cityopt"
+            onClick={() => {
+              chooseCity(c.id);
+              setSheet(null);
+              if (c.id !== city.id) toast(`Showing ${c.name}`);
+            }}
+          >
+            <span>{c.name}</span>
+            <small>{c.state}</small>
+          </button>
+        ))}
       </div>
     </div>
   );

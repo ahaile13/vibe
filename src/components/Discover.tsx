@@ -11,8 +11,6 @@ import { STATUS, StatusPill, WorthText, liveText, metaText } from './bits';
 import { SetupNotice } from './AppShell';
 import { isActive } from '@/lib/scoring';
 import { fmtMi } from '@/lib/geo';
-import { CITY } from '@/lib/city';
-import { Skyline } from './Skyline';
 import { Wordmark } from './Logo';
 import type { EventRow } from '@/lib/types';
 
@@ -27,7 +25,7 @@ function endOfNight(now: number) {
 
 export function Discover() {
   const params = useSearchParams();
-  const { events, stats, now, dist, status, userLoc, posts, openCreate, locate } = useLive();
+  const { events, stats, now, dist, status, userLoc, posts, openCreate, locate, city, setSheet } = useLive();
   const [when, setWhen] = useState<When>('now');
   const [cat, setCat] = useState('For You');
   const [q, setQ] = useState('');
@@ -57,21 +55,24 @@ export function Discover() {
   const active = events.filter((e) => isActive(e, now) && e.visibility === 'public');
   const popping = active.filter((e) => stats[e.id]?.status === 'pop').length;
   const heating = active.filter((e) => stats[e.id]?.mom === 'up').length;
-  const headline = popping >= 3 ? `${CITY.name} is popping tonight` : popping ? `${CITY.name} is warming up` : active.length ? `${CITY.name} is just getting started` : `${CITY.name} is quiet right now`;
+  const headline = popping >= 3 ? `${city.name} is popping tonight` : popping ? `${city.name} is warming up` : active.length ? `${city.name} is just getting started` : `${city.name} is quiet right now`;
   const stories = [...active].sort((a, b) => (stats[b.id]?.rank ?? 0) - (stats[a.id]?.rank ?? 0));
 
   return (
     <>
       <SetupNotice />
       <header className="hero">
-        <Skyline />
         <div className="hero-in">
         <div className="top">
           <div>
             <h1 className="where">Where’s the <Wordmark text="vibe" />?</h1>
             <div className="live-line">
               <span className="livedot" />
-              Live in {CITY.name}{userLoc ? '' : ', distances from Downtown'}
+              <button className="citybtn" onClick={() => setSheet({ kind: 'city' })} aria-label={`City: ${city.name}. Change city`}>
+                Live in {city.name}
+                <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" /></svg>
+              </button>
+              {!userLoc && <span className="dim">Distances from downtown</span>}
             </div>
           </div>
           <div className="seg glass" role="group" aria-label="When">
