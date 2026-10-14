@@ -32,12 +32,12 @@ function windows(r: () => number, x: number, w: number, top: number, density: nu
     for (let wx = x + 6; wx < x + w - 6; wx += 9) {
       if (r() >= density) continue;
       const o = 0.25 + r() * 0.6;
-      if (o > 0.6 && r() < 0.6) out.push(<circle key={`${key}-${wx}-${y}h`} cx={wx + 1.6} cy={y + 2.3} r={7} fill="url(#sky-bokeh)" opacity={0.55} />);
+      if (o > 0.6 && r() < 0.6) out.push(<circle key={`${key}-${wx}-${y}h`} className="halo" cx={wx + 1.6} cy={y + 2.3} r={7} fill="url(#sky-bokeh)" opacity={0.55} />);
       const tw = r() < 0.34;
       out.push(
         <rect
           key={`${key}-${wx}-${y}`} x={wx} y={y} width={3.2} height={4.6} fill="var(--sky-win)" opacity={o.toFixed(2)}
-          className={tw ? 'tw' : undefined}
+          className={tw ? 'win tw' : 'win'}
           style={tw ? { animationDelay: `${(r() * 9).toFixed(2)}s`, animationDuration: `${(2.2 + r() * 4).toFixed(2)}s` } : undefined}
         />,
       );
@@ -590,6 +590,14 @@ export function Skyline({ city = DEFAULT_CITY, className = '' }: { city?: City; 
           <stop offset="0" stopColor="#ff6a5a" stopOpacity="0.7" />
           <stop offset="1" stopColor="#ff6a5a" stopOpacity="0" />
         </radialGradient>
+        <radialGradient id="sky-sunglow">
+          <stop offset="0" stopColor="#fff2d6" stopOpacity="0.9" />
+          <stop offset="1" stopColor="#fff2d6" stopOpacity="0" />
+        </radialGradient>
+        <mask id="sky-moon-m">
+          <rect x={980} y={56} width={60} height={60} fill="#fff" />
+          <circle cx={1020} cy={78} r={18} fill="#000" />
+        </mask>
         <filter id="sky-soft" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="6" />
         </filter>
@@ -601,6 +609,15 @@ export function Skyline({ city = DEFAULT_CITY, className = '' }: { city?: City; 
       </defs>
       <rect width={W} height={H} fill="url(#sky-air)" />
       <rect width={W} height={H} fill="url(#sky-glow)" />
+      {/* day: a soft sun; night: a crescent moon */}
+      <g className="sun">
+        <circle cx={1010} cy={92} r={120} fill="url(#sky-sunglow)" />
+        <circle cx={1010} cy={92} r={30} fill="#fff6e4" />
+      </g>
+      <g className="moon">
+        <circle cx={1010} cy={86} r={60} fill="url(#sky-bokeh)" opacity={0.25} />
+        <circle cx={1010} cy={86} r={20} fill="#efe7d4" opacity={0.92} mask="url(#sky-moon-m)" />
+      </g>
       {art.land}
       <g opacity={0.5}>{art.back}</g>
       {art.mid}

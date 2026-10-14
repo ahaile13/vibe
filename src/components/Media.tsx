@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import { artBackground } from '@/lib/art';
+import { Flyer } from './Flyer';
 import { mediaUrl } from '@/lib/supabase/client';
 import type { EventRow, PostRow } from '@/lib/types';
 
@@ -50,5 +50,5 @@ export function PostMedia({ post, controls = false }: { post: PostRow; controls?
 export function Cover({ event, posts }: { event: EventRow; posts?: PostRow[] }) {
   const latest = posts?.[0];
   if (latest) return <PostMedia post={latest} />;
-  return <div className="art gen" style={{ background: artBackground(event.id, event.category) }} />;
+  return <Flyer event={event} />;
 }

@@ -25,7 +25,7 @@ function endOfNight(now: number) {
 
 export function Discover() {
   const params = useSearchParams();
-  const { events, stats, now, dist, status, userLoc, posts, openCreate, locate, city, setSheet } = useLive();
+  const { events, stats, now, dist, status, userLoc, posts, openCreate, locate, city, setSheet, theme, setThemeMode } = useLive();
   const [when, setWhen] = useState<When>('now');
   const [cat, setCat] = useState('For You');
   const [q, setQ] = useState('');
@@ -73,6 +73,14 @@ export function Discover() {
                 <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" /></svg>
               </button>
               {!userLoc && <span className="dim">Distances from downtown</span>}
+              <button
+                className="themebtn"
+                onClick={() => setThemeMode(theme === 'day' ? 'night' : 'day')}
+                aria-label={theme === 'day' ? 'Switch to night theme' : 'Switch to day theme'}
+                title={theme === 'day' ? 'Night theme' : 'Day theme'}
+              >
+                <Icon name={theme === 'day' ? 'moon' : 'sun'} />
+              </button>
             </div>
           </div>
           <div className="seg glass" role="group" aria-label="When">

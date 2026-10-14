@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import { Quicksand } from 'next/font/google';
+import { Bebas_Neue, Quicksand } from 'next/font/google';
 import './globals.css';
 import { LiveProvider } from '@/components/LiveProvider';
 import { AppShell } from '@/components/AppShell';
+import { THEME_BOOT } from '@/lib/theme';
 
 // One rounded geometric family for everything (variable weight 300–700).
 const quicksand = Quicksand({ subsets: ['latin'], variable: '--font-q' });
+// Condensed display face for event flyers.
+const poster = Bebas_Neue({ subsets: ['latin'], weight: '400', variable: '--font-poster' });
 
 export const metadata: Metadata = {
   // Vercel provides VERCEL_PROJECT_PRODUCTION_URL automatically; no setup needed.
@@ -28,7 +31,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={quicksand.variable}>
+    <html lang="en" className={`${quicksand.variable} ${poster.variable}`} data-theme="night" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+      </head>
       <body>
         <LiveProvider>
           <AppShell>{children}</AppShell>

@@ -17,7 +17,7 @@ const VIBE_LABEL = { popping: '🔥 Popping', mid: '😐 Mid', dead: '💀 Dead'
 
 export function ProfileView() {
   const router = useRouter();
-  const { user, authReady, profile, setProfile, saved, myRatings, stats, events, now, userLoc, locate, openCreate, toast, status, city, setSheet } = useLive();
+  const { user, authReady, profile, setProfile, saved, myRatings, stats, events, now, userLoc, locate, openCreate, toast, status, city, setSheet, themeMode, setThemeMode } = useLive();
   const [counts, setCounts] = useState({ comments: 0, posts: 0 });
   const [extra, setExtra] = useState<EventRow[]>([]);
   const [editing, setEditing] = useState(false);
@@ -126,6 +126,15 @@ export function ProfileView() {
           ) : (
             <p style={{ color: 'var(--muted)', margin: 0 }}>Rate a spot you’re at and it shows up here. Nobody else can see who rated what.</p>
           )}
+        </section>
+        <section className="panel">
+          <h2>Appearance</h2>
+          <div className="seg glass" role="group" aria-label="Theme" style={{ display: 'flex' }}>
+            {([['auto', 'Auto'], ['day', 'Day'], ['night', 'Night']] as const).map(([k, l]) => (
+              <button key={k} style={{ flex: 1 }} aria-pressed={themeMode === k} onClick={() => setThemeMode(k)}>{l}</button>
+            ))}
+          </div>
+          <p className="foot-note">Auto uses the day theme from 6:30 AM to 6:30 PM and night after dark.</p>
         </section>
         <section className="panel">
           <h2>Location</h2>

@@ -7,6 +7,7 @@ import { getSupabase, supabaseConfigured } from '@/lib/supabase/client';
 import { computeStats, isActive, rankAll, type Stats } from '@/lib/scoring';
 import { distanceMi, getFix, type Fix } from '@/lib/geo';
 import { CITIES, CITY_LIST, DEFAULT_CITY, type City } from '@/lib/city';
+import { THEME_KEY, resolveTheme, type Theme, type ThemeMode } from '@/lib/theme';
 
 const CITY_KEY = 'vibes.city';
 /** Events farther than this from the selected city's center belong to another city. */
@@ -46,6 +47,9 @@ interface LiveValue {
   events: EventRow[];
   city: City;
   chooseCity: (id: string) => void;
+  themeMode: ThemeMode;
+  theme: Theme;
+  setThemeMode: (m: ThemeMode) => void;
   eventById: (id: string) => EventRow | undefined;
   stats: Record<string, Stats>;
   rows: Record<string, RatingRow[]>;
@@ -124,6 +128,26 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   const [now, setNow] = useState(() => Date.now());
   const [userLoc, setUserLoc] = useState<LatLng | null>(null);
   const [city, setCity] = useState<City>(DEFAULT_CITY);
+  const [themeMode, setThemeMode] = useState<ThemeMode>('auto');
+  const [theme, setTheme] = useState<Theme>(() => resolveTheme('auto'));
+
+  useEffect(() => {
+    try {
+      const m = localStorage.getItem(THEME_KEY) as ThemeMode | null;
+      if (m === 'day' || m === 'night' || m === 'auto') setThemeMode(m);
+    } catch {
+      /* storage unavailable: follow the clock */
+    }
+  }, []);
+
+  const chooseTheme = useCallback((m: ThemeMode) => {
+    setThemeMode(m);
+    try {
+      localStorage.setItem(THEME_KEY, m);
+    } catch {
+      /* not saved; still applies now */
+    }
+  }, []);
   const cityChosen = useRef(false);
 
   useEffect(() => {
@@ -351,6 +375,12 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     };
   }, [refreshEvent, reload]);
 
+  useEffect(() => {
+    const t = resolveTheme(themeMode, new Date(now));
+    setTheme(t);
+    document.documentElement.setAttribute('data-theme', t);
+  }, [themeMode, now]);
+
   // ------------------------------------------------------------ derived
   const dist = useCallback(
     (e: EventRow) => (e.lat == null || e.lng == null ? null : distanceMi(userLoc ?? city.center, { lat: e.lat, lng: e.lng })),
@@ -545,7 +575,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
 
   const value: LiveValue = {
     status, loadError, authReady, user, profile, setProfile,
-    events: cityEvents, city, chooseCity, eventById, stats, rows, comments, posts, now, userLoc, dist,
+    events: cityEvents, city, chooseCity, themeMode, theme, setThemeMode: chooseTheme, eventById, stats, rows, comments, posts, now, userLoc, dist,
     saved, myRatings, helped,
     reload, refreshEvent, fetchEvent, addEvent,
     requireLogin, verify, startRate, openCapture, openCreate,
