@@ -9,7 +9,7 @@ export const STATUS: Record<Status, { e: string; l: string; c: string }> = {
   mid: { e: '😐', l: 'Mid', c: 'var(--mid)' },
   dead: { e: '💀', l: 'Dead', c: 'var(--dead)' },
   quiet: { e: '◌', l: 'Not enough ratings', c: 'var(--quiet)' },
-  soon: { e: '⏱', l: 'Starts soon', c: '#7cc4ff' },
+  soon: { e: '⏱', l: 'Starts soon', c: 'var(--soon)' },
   ended: { e: '◼', l: 'Ended', c: 'var(--quiet)' },
 };
 
@@ -19,7 +19,8 @@ export function StatusPill({ s }: { s: Stats }) {
   const t = STATUS[s.status];
   return (
     <span className="pill" style={{ ['--c' as string]: t.c }}>
-      {t.e} {t.l}
+      <i aria-hidden="true" />
+      {t.l}
       {scored(s) && <b>{s.score}</b>}
     </span>
   );
@@ -32,8 +33,8 @@ export function WorthText({ s }: { s: Stats }) {
 }
 
 export function MomText({ s }: { s: Stats }) {
-  if (s.mom === 'up') return <span className="mom up">↗ Heating up</span>;
-  if (s.mom === 'down') return <span className="mom down">↘ Cooling down</span>;
+  if (s.mom === 'up') return <span className="mom up">Heating up</span>;
+  if (s.mom === 'down') return <span className="mom down">Cooling down</span>;
   return null;
 }
 

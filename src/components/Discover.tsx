@@ -65,7 +65,7 @@ export function Discover() {
           <h1 className="where">Where’s the vibe?</h1>
           <div className="live-line">
             <span className="livedot" />
-            Dallas, TX · Live{userLoc ? '' : ' · distances from Downtown'}
+            Live in Dallas{userLoc ? '' : ', distances from Downtown'}
           </div>
         </div>
         <div className="seg glass" role="group" aria-label="When">
@@ -75,12 +75,16 @@ export function Discover() {
         </div>
       </div>
 
-      <section className="pulse glass" aria-label="VIBES Pulse">
-        <h2>{headline}</h2>
-        <div><span className="n">{active.length}</span><span className="lab">active events</span></div>
-        <div><span className="n" style={{ color: 'var(--pop)' }}>{popping}</span><span className="lab">popping</span></div>
-        <div><span className="n" style={{ color: 'var(--mid)' }}>{heating}</span><span className="lab">heating up</span></div>
-      </section>
+      <p className="pulse">
+        {active.length === 0
+          ? 'Nothing is live yet tonight. Check back after sunset.'
+          : <>
+              <b>{headline.replace(' 🔥', '')}.</b>{' '}
+              {active.length} {active.length === 1 ? 'place is' : 'places are'} live
+              {popping ? <>, <span style={{ color: 'var(--pop)' }}>{popping} popping</span></> : null}
+              {heating ? <>, {heating} heating up</> : null}.
+            </>}
+      </p>
 
       <div className="searchrow">
         <label className="search glass">
@@ -162,9 +166,9 @@ function ReelItem({ e }: { e: EventRow }) {
       <Link href={`/e/${e.id}`} className="ri">
         <Cover event={e} posts={posts[e.id]} />
         <div className="shade" />
-        <div className="tl chip-g">{isActive(e, now) && <span className="dot" />}{liveText(e, s, now)}</div>
+        <div className="tl chip-g">{isActive(e, now) && <span className="live">Live</span>}{liveText(e, s, now)}</div>
         <div className="cb">
-          <div className="area">{[e.area, d != null ? fmtMi(d) : null].filter(Boolean).join(' · ')}</div>
+          <div className="area"><span>{e.area ?? e.category}</span>{d != null && <span>{fmtMi(d)}</span>}</div>
           <h3>{e.name}</h3>
           <div className="row"><StatusPill s={s} /><WorthText s={s} /></div>
           <div className="meta">{metaText(e, s, now)}</div>

@@ -80,7 +80,6 @@ function GateModal() {
     <>
       <div className="scrim" style={{ zIndex: 75 }} onClick={() => setModal(null)} />
       <div className="modal glass" role="alertdialog" aria-labelledby="gate-h">
-        <div className="big">{g.icon}</div>
         <h2 id="gate-h">{g.title}</h2>
         <p>{g.body(modal.detail)}</p>
         <div className="stack">
@@ -147,7 +146,7 @@ function RateSheet({ event, token }: { event: EventRow; token: string }) {
     <div className="sheet glass" role="dialog" aria-modal="true" aria-labelledby="rate-h">
       <div className="grab" />
       <h2 id="rate-h">What’s the vibe?</h2>
-      <p className="sub">{event.name} · you’re checked in ✓</p>
+      <p className="sub">{event.name}. You’re checked in.</p>
       <div className="vibes" role="group" aria-label="Vibe">
         {VIBES.map(([k, e, l, d, c]) => (
           <button key={k} className="vb" style={{ ['--c' as string]: c }} aria-pressed={vibe === k} onClick={() => { setVibe(k); navigator.vibrate?.(8); }}>
@@ -294,7 +293,7 @@ function CaptureSheet({ eventId }: { eventId?: string }) {
         <select id="cap-ev" className="in" value={evId} onChange={(e) => setEvId(e.target.value)}>
           {live.map((e) => (
             <option key={e.id} value={e.id}>
-              {e.name}{dist(e) != null ? ` · ${fmtMi(dist(e))}` : ''}
+              {e.name}{dist(e) != null ? `, ${fmtMi(dist(e))}` : ''}
             </option>
           ))}
         </select>
@@ -472,7 +471,7 @@ function Lightbox() {
       <div className="shade" />
       <button className="x chip-g" aria-label="Close" onClick={() => setSheet(null)}><Icon name="x" /></button>
       <div className="cb">
-        <b>@{name}</b> <span className="time">· posted {ago(now - Date.parse(p.created_at))} ({clock(p.created_at)})</span>
+        <b>@{name}</b> <span className="time">posted {ago(now - Date.parse(p.created_at))}, {clock(p.created_at)}</span>
         {p.caption && <p style={{ margin: '6px 0 0' }}>{p.caption}</p>}
         <button className="linkb" style={{ paddingLeft: 0 }} onClick={() => openReport('post', p.id, p.user_id, name)}>Report</button>
       </div>

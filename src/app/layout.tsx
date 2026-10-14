@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist_Mono, Inter, Space_Grotesk } from 'next/font/google';
+import { Fraunces, Manrope } from 'next/font/google';
 import './globals.css';
 import { LiveProvider } from '@/components/LiveProvider';
 import { AppShell } from '@/components/AppShell';
 
-const head = Space_Grotesk({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-head' });
-const body = Inter({ subsets: ['latin'], variable: '--font-body' });
-const mono = Geist_Mono({ subsets: ['latin'], weight: ['500', '600'], variable: '--font-mono' });
+// Variable font: weight and optical size are both available.
+const head = Fraunces({ subsets: ['latin'], variable: '--font-head', axes: ['opsz'] });
+const body = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-body' });
 
 export const metadata: Metadata = {
   // Vercel provides VERCEL_PROJECT_PRODUCTION_URL automatically; no setup needed.
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#07060A',
+  themeColor: '#0B0F11',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -29,7 +29,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${head.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="en" className={`${head.variable} ${body.variable}`}>
       <body>
         <LiveProvider>
           <AppShell>{children}</AppShell>

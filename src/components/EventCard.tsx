@@ -20,10 +20,9 @@ export function EventCard({ e, variant }: { e: EventRow; variant?: 'feat' | 'min
       <Cover event={e} posts={posts[e.id]} />
       <div className="shade" />
       <div className="tl chip-g">
-        {isActive(e, now) && <span className="dot" />}
+        {isActive(e, now) && <span className="live">Live</span>}
         {liveText(e, s, now)}
       </div>
-      {variant !== 'mini' && d != null && <div className="tr chip-g mono">{fmtMi(d)}</div>}
       <button
         className="save chip-g"
         aria-pressed={sv}
@@ -37,7 +36,10 @@ export function EventCard({ e, variant }: { e: EventRow; variant?: 'feat' | 'min
         <Icon name="bookmark" fill />
       </button>
       <div className="cb">
-        <div className="area">{[e.area, e.category].filter(Boolean).join(' · ')}</div>
+        <div className="area">
+          <span>{e.area ?? e.category}</span>
+          {d != null && variant !== 'mini' && <span>{fmtMi(d)}</span>}
+        </div>
         <h3>{e.name}</h3>
         <div className="row">
           <StatusPill s={s} />
@@ -45,7 +47,7 @@ export function EventCard({ e, variant }: { e: EventRow; variant?: 'feat' | 'min
           <MomText s={s} />
         </div>
         <div className="meta">{metaText(e, s, now)}</div>
-        {tc && <p className="quote chip-g">“{tc.body}”</p>}
+        {tc && variant === 'feat' && <p className="quote">“{tc.body}”</p>}
       </div>
     </Link>
   );

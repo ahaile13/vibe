@@ -64,11 +64,11 @@ export function EventDetail({ id }: { id: string }) {
           <Icon name="back" />
         </button>
         <div className="tl chip-g" style={{ left: 66, top: 22 }}>
-          {activeNow && <span className="dot" />}
+          {activeNow && <span className="live">Live</span>}
           {liveText(ev, s, now)}
         </div>
         <div className="cb">
-          <div className="area">{[ev.area, ev.category, d != null ? fmtMi(d) : null].filter(Boolean).join(' · ')}</div>
+          <div className="area"><span>{ev.area ?? ev.category}</span>{ev.area && <span>{ev.category}</span>}{d != null && <span>{fmtMi(d)}</span>}</div>
           <h1>{ev.name}</h1>
           <div className="row"><StatusPill s={s} /><WorthText s={s} /><MomText s={s} /></div>
           <div className="meta">{metaText(ev, s, now)}</div>
@@ -87,7 +87,7 @@ export function EventDetail({ id }: { id: string }) {
           <ScoreBlock ev={ev} s={s} />
           {mine && (
             <p className="foot-note">
-              You rated {VIBE_LABEL[mine.vibe]} · {mine.worth ? 'Worth it' : 'Not worth it'}, {ago(now - Date.parse(mine.at))}.
+              You rated it {VIBE_LABEL[mine.vibe].slice(3).toLowerCase()} and {mine.worth ? 'worth it' : 'not worth it'}, {ago(now - Date.parse(mine.at))}.
               {activeNow ? ' Rating again replaces it.' : ''}
             </p>
           )}
@@ -97,11 +97,11 @@ export function EventDetail({ id }: { id: string }) {
           <section className="panel">
             <h2>{ended ? 'How it went' : 'The vibe right now'}</h2>
             <div className="bars">
-              {([['🔥 Popping', 'var(--pop)', s.pp], ['😐 Mid', 'var(--mid)', s.pm], ['💀 Dead', 'var(--dead)', s.pd]] as const).map(([l, c, v]) => (
+              {([['Popping', 'var(--pop)', s.pp], ['Mid', 'var(--mid)', s.pm], ['Dead', 'var(--dead)', s.pd]] as const).map(([l, c, v]) => (
                 <div className="bar" key={l}>
                   <span>{l}</span>
                   <div className="track"><div className="fill" style={{ ['--c' as string]: c, width: `${(v * 100).toFixed(1)}%` }} /></div>
-                  <span className="mono">{Math.round(v * 100)}%</span>
+                  <span className="pct">{Math.round(v * 100)}%</span>
                 </div>
               ))}
             </div>
@@ -153,7 +153,7 @@ export function EventDetail({ id }: { id: string }) {
             {ev.cover_charge && (<><dt>Cover</dt><dd>{ev.cover_charge}</dd></>)}
             {ev.age_rule && (<><dt>Ages</dt><dd>{ev.age_rule}</dd></>)}
             {ev.ticket_url && (<><dt>Tickets</dt><dd><a href={ev.ticket_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>Get tickets</a></dd></>)}
-            <dt>Saved by</dt><dd className="mono">{ev.save_count}</dd>
+            <dt>Saved by</dt><dd>{ev.save_count} {ev.save_count === 1 ? 'person' : 'people'}</dd>
           </dl>
           {ev.description && <p style={{ margin: '14px 0 0', color: 'var(--muted)' }}>{ev.description}</p>}
           {ev.is_demo && <p className="foot-note">Launch listing added by VIBES. Hours are approximate.</p>}
@@ -187,7 +187,7 @@ export function EventDetail({ id }: { id: string }) {
         <div className="score">
           <div className="bignum" style={{ ['--c' as string]: final?.c ?? 'var(--quiet)' }}>{final ? s.score : '––'}</div>
           <div>
-            <div className="st">{final ? `Recap: ${final.e} ${final.l}` : 'Recap: not enough ratings'}</div>
+            <div className="st">{final ? `Final vibe: ${final.l}` : 'Not enough ratings to call it'}</div>
             <div style={{ color: 'var(--muted)', fontSize: 13.5, marginTop: 4 }}>
               This event has ended.{peak && peak.count >= 3 ? ` Peak around ${clock(peak.start)}.` : ''}
             </div>
@@ -211,7 +211,7 @@ export function EventDetail({ id }: { id: string }) {
       <div className="score">
         <div className="bignum" style={{ ['--c' as string]: t.c }}>{s.score}</div>
         <div>
-          <div className="st" style={{ color: t.c }}>{t.e} {t.l}</div>
+          <div className="st" style={{ color: t.c }}>{t.l}</div>
           <div style={{ marginTop: 4 }}><MomText s={s} /></div>
           <span className={`conf ${s.conf}`}>{CONF_LABEL[s.conf]}</span>
         </div>
@@ -262,7 +262,7 @@ function Comments({ ev }: { ev: EventRow }) {
       ) : (
         <>
           {fresh.map((c) => one(c, false))}
-          {old.length > 0 && <div className="earlier">Earlier · may not reflect right now</div>}
+          {old.length > 0 && <div className="earlier">Earlier tonight, may not reflect right now</div>}
           {old.map((c) => one(c, true))}
         </>
       )}

@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Live, location-verified ratings of what’s popping right now.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#07060A',
-    theme_color: '#07060A',
+    background_color: '#0B0F11',
+    theme_color: '#0B0F11',
     icons: [
       { src: '/brand/icon-192.png', sizes: '192x192', type: 'image/png' },
       { src: '/brand/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },

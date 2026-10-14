@@ -113,15 +113,15 @@ export function ProfileView() {
 
       <div className="cols">
         <section className="panel" id="saved">
-          <h2>Saved · only you can see this</h2>
-          {savedEvents.length ? savedEvents.map((e) => row(e, `${e.area ?? e.category} · ${STATUS[stats[e.id]?.status ?? 'ended'].l}`)) : <p style={{ color: 'var(--muted)', margin: 0 }}>Tap the bookmark on any event to keep it here.</p>}
+          <h2>Saved <small>Only you can see this</small></h2>
+          {savedEvents.length ? savedEvents.map((e) => row(e, `${e.area ?? e.category}, ${STATUS[stats[e.id]?.status ?? 'ended'].l.toLowerCase()}`)) : <p style={{ color: 'var(--muted)', margin: 0 }}>Tap the bookmark on any event to keep it here.</p>}
         </section>
         <section className="panel">
-          <h2>Your ratings · private</h2>
+          <h2>Your ratings <small>Private</small></h2>
           {ratedIds.length ? (
             ratedIds.slice(0, 30).map(([id, r]) => {
               const e = known.get(id);
-              return e ? row(e, `${VIBE_LABEL[r.vibe]} · ${r.worth ? 'Worth it' : 'Not worth it'} · ${ago(now - Date.parse(r.at))}`) : null;
+              return e ? row(e, `${VIBE_LABEL[r.vibe].slice(3)}, ${r.worth ? 'worth it' : 'not worth it'}, ${ago(now - Date.parse(r.at))}`) : null;
             })
           ) : (
             <p style={{ color: 'var(--muted)', margin: 0 }}>Rate a spot you’re at and it shows up here. Nobody else can see who rated what.</p>

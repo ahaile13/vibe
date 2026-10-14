@@ -16,9 +16,9 @@ import type { EventRow } from '@/lib/types';
 // Free dark basemap, no API key. Swap via NEXT_PUBLIC_MAP_STYLE (e.g. a Mapbox or MapTiler style URL).
 const STYLE = process.env.NEXT_PUBLIC_MAP_STYLE || 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 type MapLib = typeof import('maplibre-gl');
-const COLOR: Record<string, string> = { pop: '#FF6B1A', mid: '#F2B43A', dead: '#7D8AA8' };
+const COLOR: Record<string, string> = { pop: '#EE8B5A', mid: '#D9B866', dead: '#7E8B96' };
 const FILTERS: [string, string][] = [
-  ['active', 'Active now'], ['pop', '🔥 Popping only'], ['worth', '80%+ worth it'], ['heat', 'Heating up'], ['free', 'Free entry'], ['near', 'Within 2 mi'],
+  ['active', 'Active now'], ['pop', 'Popping only'], ['worth', '80%+ worth it'], ['heat', 'Heating up'], ['free', 'Free entry'], ['near', 'Within 2 mi'],
 ];
 
 export function MapView() {
@@ -163,7 +163,7 @@ export function MapView() {
           <button className="mapcard glass" style={{ textAlign: 'left' }} onClick={() => router.push(`/e/${selected.id}`)}>
             <div className="thumb"><Cover event={selected} posts={posts[selected.id]} /></div>
             <div>
-              <div className="area" style={{ color: 'var(--muted)' }}>{[selected.area, fmtMi(dist(selected))].filter(Boolean).join(' · ')}</div>
+              <div className="area"><span>{selected.area}</span><span>{fmtMi(dist(selected))}</span></div>
               <h3>{selected.name}</h3>
               <div className="row"><StatusPill s={stats[selected.id]} /><WorthText s={stats[selected.id]} /></div>
               {tc && <div className="meta" style={{ color: 'var(--muted)' }}>“{tc.body}”</div>}

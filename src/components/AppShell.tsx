@@ -46,11 +46,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="page">{children}</main>
       {!isAuth && (
         <nav className="bnav glass" aria-label="Main">
-          <Link href="/" aria-current={current('/') ? 'page' : undefined}><Icon name="compass" /><span>Discover</span></Link>
-          <Link href="/map" aria-current={current('/map') ? 'page' : undefined}><Icon name="map" /><span>Map</span></Link>
+          <Link href="/" aria-label="Discover" aria-current={current('/') ? 'page' : undefined}><Icon name="compass" /></Link>
+          <Link href="/map" aria-label="Map" aria-current={current('/map') ? 'page' : undefined}><Icon name="map" /></Link>
           <button className="plus" onClick={() => openCapture()} aria-label="Capture the vibe"><Icon name="plus" /></button>
-          <Link href="/trending" aria-current={current('/trending') ? 'page' : undefined}><Icon name="trend" /><span>Trending</span></Link>
-          <Link href="/profile" aria-current={current('/profile') ? 'page' : undefined}><Icon name="user" /><span>Profile</span></Link>
+          <Link href="/trending" aria-label="Trending" aria-current={current('/trending') ? 'page' : undefined}><Icon name="trend" /></Link>
+          <Link href="/profile" aria-label="Profile" aria-current={current('/profile') ? 'page' : undefined}><Icon name="user" /></Link>
         </nav>
       )}
       <Layers />
