@@ -6,38 +6,29 @@ Live, location-verified ratings of what's popping right now. Dallas first.
 
 ---
 
-## Go live in about 15 minutes
+## Go live (no environment variables to type)
 
-### 1. Supabase (database, accounts, uploads)
+### 1. Deploy to Vercel
 
-1. Create a free project at [supabase.com](https://supabase.com). Pick the **US East** or **US Central** region.
-2. Open **SQL Editor → New query**, paste all of `supabase/migrations/20261012000000_init.sql`, and click **Run**.
-3. New query again: paste `supabase/seed.sql` and **Run**. This adds 10 Dallas launch spots and creates tonight's events.
-4. **Project Settings → API**: copy the **Project URL**, the **anon / publishable key**, and the **service_role key**.
+1. [vercel.com/new](https://vercel.com/new) → import `ahaile13/vibe` → **Deploy**.
+   The first deploy shows a "Supabase isn't connected yet" banner. That's expected.
 
-### 2. Vercel (hosting)
+### 2. Add the database from inside Vercel
 
-1. [vercel.com/new](https://vercel.com/new) → import this GitHub repo. Framework is detected as Next.js.
-2. Before deploying, add these **Environment Variables**:
+1. In your Vercel project, open **Storage → Create Database → Supabase**. Pick a US region and connect it to this project.
+   Vercel fills in every setting the app needs (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`). You don't copy anything.
+2. Open the new database in Supabase (Vercel has an **Open in Supabase** button). Go to **SQL Editor → New query**, paste all of `supabase/migrations/20261012000000_init.sql`, and **Run**.
+3. New query: paste `supabase/seed.sql` and **Run**. This adds 10 Dallas launch spots, creates tonight's events, and schedules new ones every morning.
+4. Back in Vercel: **Deployments → ⋯ → Redeploy** so the app picks up the database.
 
-   | Name | Value |
-   |---|---|
-   | `NEXT_PUBLIC_SUPABASE_URL` | Project URL |
-   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon / publishable key |
-   | `SUPABASE_SERVICE_ROLE_KEY` | service_role key (server only, never shared) |
-   | `CRON_SECRET` | any long random string |
-   | `NEXT_PUBLIC_SITE_URL` | your Vercel URL, e.g. `https://vibe-dallas.vercel.app` |
-
-3. Click **Deploy**.
-
-### 3. Connect sign-in to your URL
+### 3. Point sign-in at your site
 
 In Supabase → **Authentication → URL Configuration**:
 
-- **Site URL:** your Vercel URL
-- **Redirect URLs:** add `https://YOUR-APP.vercel.app/auth/callback` (and `http://localhost:3000/auth/callback` for local dev)
+- **Site URL:** your Vercel address, e.g. `https://vibe-ahaile13.vercel.app`
+- **Redirect URLs:** add the same address followed by `/auth/callback`
 
-Email sign-in works immediately. Google and Apple are optional: enable them under **Authentication → Providers** when you're ready. Until then those buttons say they aren't set up yet.
+Email sign-in then works. Google and Apple are optional, under **Authentication → Providers**.
 
 ### 4. Try it
 
@@ -45,8 +36,6 @@ Email sign-in works immediately. Google and Apple are optional: enable them unde
 2. Tap **+ → Create an event**. It's pinned where you're standing.
 3. Open it, tap **Rate the vibe**. You pass the location check because you're actually there.
 4. Open the same event from a second phone across town: you'll get "You have to be there to vibe."
-
-The daily cron (`vercel.json`) creates each night's events for the launch spots at 10 AM Central.
 
 ---
 
@@ -87,7 +76,7 @@ GPS can still be spoofed by a determined person with developer tools. These chec
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in your Supabase values
+cp .env.example .env.local   # paste your Supabase URL and anon key (local only)
 npm run dev
 ```
 

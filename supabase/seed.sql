@@ -19,3 +19,18 @@ insert into public.venues (name, category, area, address, lat, lng, radius_m, fe
 
 select public.ensure_demo_events();
 select public.ensure_demo_events(((now() at time zone 'America/Chicago')::date + 1));
+
+-- Create each night's events automatically, inside the database (no Vercel cron
+-- or secrets needed). 15:00 UTC = 10 AM Central. Skipped quietly if pg_cron
+-- isn't available on your plan.
+do $$
+begin
+  execute 'create extension if not exists pg_cron';
+  perform cron.schedule(
+    'vibes-demo-events',
+    '0 15 * * *',
+    $job$select public.ensure_demo_events(); select public.ensure_demo_events(((now() at time zone 'America/Chicago')::date + 1));$job$
+  );
+exception when others then
+  raise notice 'pg_cron not available (%). Run ensure_demo_events() daily some other way.', sqlerrm;
+end $$;

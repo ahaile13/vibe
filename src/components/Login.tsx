@@ -14,7 +14,7 @@ export function Login() {
   const [state, setState] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [err, setErr] = useState<string | null>(params.get('error') ? 'That sign-in link expired or was opened in a different browser. Request a new one.' : null);
 
-  const site = () => process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+  const site = () => window.location.origin;
   const callback = () => `${site()}/auth/callback?next=${encodeURIComponent(next)}`;
 
   async function sendLink(e: FormEvent) {

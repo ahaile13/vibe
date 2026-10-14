@@ -9,7 +9,11 @@ const body = Inter({ subsets: ['latin'], variable: '--font-body' });
 const mono = Geist_Mono({ subsets: ['latin'], weight: ['500', '600'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  // Vercel provides VERCEL_PROJECT_PRODUCTION_URL automatically; no setup needed.
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000'),
+  ),
   title: { default: 'VIBES · Where’s the vibe tonight?', template: '%s · VIBES' },
   description: 'Live, location-verified ratings of what’s popping in Dallas right now.',
   applicationName: 'VIBES',
