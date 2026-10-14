@@ -341,7 +341,8 @@ export function Skyline({ city = DEFAULT_CITY, className = '' }: { city?: City; 
     <svg className={`skyline ${className}`} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id="sky-air" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="var(--sky-top)" />
+          <stop offset="0" stopColor="var(--sky-top)" stopOpacity="0" />
+          <stop offset="0.35" stopColor="var(--sky-top)" stopOpacity="0.85" />
           <stop offset="0.72" stopColor="var(--sky-haze)" />
           <stop offset="1" stopColor="var(--sky-haze)" />
         </linearGradient>

@@ -102,8 +102,10 @@ main.page { min-height: 100dvh; padding: 20px 20px 132px; max-width: 1220px; mar
 .backdrop { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
   background: linear-gradient(180deg, var(--bg) 0%, var(--sky-top) 30%, var(--sky-haze) 62%, var(--bg) 100%); }
 /* height tracks width so a city's landmarks (drawn between x 380 and 1080) stay in frame on phones; 1440x640 drawing */
-.backdrop .skyline { position: absolute; left: 0; bottom: 0; width: 100%; height: clamp(300px, 92vw, 78vh); animation: skyin 0.9s var(--ease); }
+.backdrop .skyline { position: absolute; left: 0; bottom: clamp(70px, 11vh, 130px); width: 100%; height: clamp(300px, 92vw, 78vh); animation: skyin 0.9s var(--ease); }
 @keyframes skyin { from { opacity: 0; } }
+/* street level under the raised skyline, same tone as the front silhouettes */
+.backdrop::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: calc(clamp(70px, 11vh, 130px) + 1px); background: var(--sky-front); }
 @media (min-width: 900px) { .backdrop { left: var(--side); } }
 .hero { margin: 0 0 6px; }
 .hero-in { display: flex; flex-direction: column; gap: 18px; }
