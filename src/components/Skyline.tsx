@@ -4,8 +4,12 @@ import { useMemo, type ReactNode } from 'react';
 import { DEFAULT_CITY, type City, type Landmark, type Terrain } from '@/lib/city';
 
 const W = 1440;
-const H = 480;
+/** Buildings are authored in a 480-tall space and drawn VS times taller. */
+const VS = 1.6;
+const H = 640;
 const BASE = H;
+/** Map an authored y (0..480, street at 480) into the taller drawing. */
+const Y = (v: number) => BASE - (480 - v) * VS;
 
 function rng(seed: number) {
   let s = (seed % 2147483646) + 1;
@@ -34,7 +38,8 @@ const FILL = 'var(--sky-mid)';
 const pts = (p: [number, number][]) => p.map(([a, b]) => `${a},${b}`).join(' ');
 const mast = (x: number, top: number, len: number, k: string) => <rect key={k} x={x - 1} y={top - len} width={2} height={len} fill={FILL} />;
 
-function landmark(l: Landmark, r: () => number, i: number): ReactNode {
+function landmark(src: Landmark, r: () => number, i: number): ReactNode {
+  const l: Landmark = { ...src, h: src.h * VS, s: src.s == null ? undefined : src.s * VS * 0.8 };
   const k = `lm${i}`;
   const w = l.w ?? 60;
   const t = BASE - l.h;
@@ -261,19 +266,19 @@ function terrain(kind: Terrain, r: () => number): ReactNode {
   };
   if (kind === 'peak') {
     // one great snowcapped volcano
-    const cx = 990, top = 130;
+    const cx = 990, top = Y(130);
     return (
       <g>
-        <polygon points={pts([[cx - 420, BASE - 110], [cx - 40, top + 18], [cx, top], [cx + 50, top + 22], [cx + 460, BASE - 100], [cx + 460, BASE], [cx - 420, BASE]])} fill="var(--sky-mtn)" />
-        <polygon points={pts([[cx - 70, top + 48], [cx - 40, top + 18], [cx, top], [cx + 50, top + 22], [cx + 92, top + 56], [cx + 40, top + 44], [cx + 6, top + 58], [cx - 30, top + 44]])} fill="var(--sky-snow)" opacity={0.5} />
+        <polygon points={pts([[cx - 420, BASE - 110 * VS], [cx - 40, top + 18 * VS], [cx, top], [cx + 50, top + 22 * VS], [cx + 460, BASE - 100 * VS], [cx + 460, BASE], [cx - 420, BASE]])} fill="var(--sky-mtn)" />
+        <polygon points={pts([[cx - 70, top + 48 * VS], [cx - 40, top + 18 * VS], [cx, top], [cx + 50, top + 22 * VS], [cx + 92, top + 56 * VS], [cx + 40, top + 44 * VS], [cx + 6, top + 58 * VS], [cx - 30, top + 44 * VS]])} fill="var(--sky-snow)" opacity={0.5} />
       </g>
     );
   }
   if (kind === 'range') {
     return (
       <g>
-        <polygon points={ridge(230, 90, 36, 90)} fill="var(--sky-mtn)" opacity={0.7} />
-        <polygon points={ridge(300, 50, 30, 50)} fill="var(--sky-mtn)" />
+        <polygon points={ridge(Y(230), 90 * VS, 36, 90 * VS)} fill="var(--sky-mtn)" opacity={0.7} />
+        <polygon points={ridge(Y(300), 50 * VS, 30, 50 * VS)} fill="var(--sky-mtn)" />
       </g>
     );
   }
@@ -281,12 +286,12 @@ function terrain(kind: Terrain, r: () => number): ReactNode {
     // desert peaks with a double hump on the left
     return (
       <g>
-        <polygon points={pts([[0, BASE], [0, 330], [120, 290], [190, 250], [240, 285], [300, 240], [380, 300], [520, 320], [1440, 330], [1440, BASE]])} fill="var(--sky-mtn)" />
-        <polygon points={ridge(330, 40, 50, 40)} fill="var(--sky-mtn)" opacity={0.6} />
+        <polygon points={pts([[0, BASE], [0, Y(330)], [120, Y(290)], [190, Y(250)], [240, Y(285)], [300, Y(240)], [380, Y(300)], [520, Y(320)], [1440, Y(330)], [1440, BASE]])} fill="var(--sky-mtn)" />
+        <polygon points={ridge(Y(330), 40 * VS, 50, 40 * VS)} fill="var(--sky-mtn)" opacity={0.6} />
       </g>
     );
   }
-  return <polygon points={ridge(340, 30, 60, 30)} fill="var(--sky-mtn)" opacity={0.85} />;
+  return <polygon points={ridge(Y(340), 30 * VS, 60, 30 * VS)} fill="var(--sky-mtn)" opacity={0.85} />;
 }
 
 /** A misty night skyline of a city. Decorative. */
@@ -296,7 +301,7 @@ export function Skyline({ city = DEFAULT_CITY, className = '' }: { city?: City; 
     const land = terrain(city.terrain, r);
     const back: ReactNode[] = [];
     for (let x = -20; x < W; ) {
-      const w = 30 + r() * 60, h = 70 + r() * 150;
+      const w = 30 + r() * 60, h = (70 + r() * 150) * VS;
       back.push(<rect key={`b${x}`} x={x} y={BASE - h} width={w} height={h} fill="var(--sky-back)" />);
       x += w + 2;
     }
@@ -308,7 +313,7 @@ export function Skyline({ city = DEFAULT_CITY, className = '' }: { city?: City; 
       });
     const fillers: ReactNode[] = [];
     for (let x = -10; x < W; ) {
-      const w = 34 + r() * 52, h = 60 + r() * 140;
+      const w = 34 + r() * 52, h = (60 + r() * 140) * VS;
       if (!occupied(x, x + w)) {
         fillers.push(
           <g key={`f${x}`}>
@@ -321,7 +326,7 @@ export function Skyline({ city = DEFAULT_CITY, className = '' }: { city?: City; 
     }
     const front: ReactNode[] = [];
     for (let x = -10; x < W; ) {
-      const w = 40 + r() * 90, h = 18 + r() * 60;
+      const w = 40 + r() * 90, h = (18 + r() * 60) * 1.2;
       front.push(<rect key={`n${x}`} x={x} y={BASE - h} width={w} height={h} fill="var(--sky-front)" />);
       x += w;
     }
