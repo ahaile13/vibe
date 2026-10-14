@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getSupabase } from '@/lib/supabase/client';
 import { SetupNotice } from './AppShell';
 import { Logo } from './Logo';
+import { Skyline } from './Skyline';
 
 type Mode = 'signin' | 'signup';
 
@@ -84,8 +85,9 @@ export function Login() {
 
   return (
     <div className="auth">
+      <Skyline className="auth-bg" />
       <SetupNotice />
-      <Logo height={105} />
+      <Logo size={52} />
       <h1>Know the vibe.</h1>
       <p>Browse freely. Sign in to rate, comment and post from where you are.</p>
 

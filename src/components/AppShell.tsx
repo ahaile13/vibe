@@ -29,7 +29,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <>
       {!isAuth && (
         <nav className="side" aria-label="Main">
-          <Logo />
+          <Logo size={34} />
           {SIDE.map(([href, label, icon]) => (
             <Link key={href} href={href} aria-current={current(href) ? 'page' : undefined}>
               <Icon name={icon} />

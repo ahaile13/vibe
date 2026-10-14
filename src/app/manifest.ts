@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'VIBES',
-    short_name: 'VIBES',
+    name: 'vibes',
+    short_name: 'vibes',
     description: 'Live, location-verified ratings of what’s popping right now.',
     start_url: '/',
     display: 'standalone',

@@ -11,6 +11,8 @@ import { STATUS, StatusPill, WorthText, liveText, metaText } from './bits';
 import { SetupNotice } from './AppShell';
 import { isActive } from '@/lib/scoring';
 import { fmtMi } from '@/lib/geo';
+import { CITY } from '@/lib/city';
+import { Skyline } from './Skyline';
 import type { EventRow } from '@/lib/types';
 
 type When = 'now' | 'tonight' | 'weekend';
@@ -54,37 +56,42 @@ export function Discover() {
   const active = events.filter((e) => isActive(e, now) && e.visibility === 'public');
   const popping = active.filter((e) => stats[e.id]?.status === 'pop').length;
   const heating = active.filter((e) => stats[e.id]?.mom === 'up').length;
-  const headline = popping >= 3 ? 'Dallas is popping tonight 🔥' : popping ? 'Dallas is warming up' : active.length ? 'Dallas is just getting started' : 'Dallas is quiet right now';
+  const headline = popping >= 3 ? `${CITY.name} is popping tonight` : popping ? `${CITY.name} is warming up` : active.length ? `${CITY.name} is just getting started` : `${CITY.name} is quiet right now`;
   const stories = [...active].sort((a, b) => (stats[b.id]?.rank ?? 0) - (stats[a.id]?.rank ?? 0));
 
   return (
     <>
       <SetupNotice />
-      <div className="top">
-        <div>
-          <h1 className="where">Where’s the vibe?</h1>
-          <div className="live-line">
-            <span className="livedot" />
-            Live in Dallas{userLoc ? '' : ', distances from Downtown'}
+      <header className="hero">
+        <Skyline />
+        <div className="hero-in">
+        <div className="top">
+          <div>
+            <h1 className="where">Where’s the vibe?</h1>
+            <div className="live-line">
+              <span className="livedot" />
+              Live in {CITY.name}{userLoc ? '' : ', distances from Downtown'}
+            </div>
+          </div>
+          <div className="seg glass" role="group" aria-label="When">
+            {([['now', 'Right now'], ['tonight', 'Tonight'], ['weekend', 'This weekend']] as [When, string][]).map(([k, l]) => (
+              <button key={k} aria-pressed={when === k} onClick={() => setWhen(k)}>{l}</button>
+            ))}
           </div>
         </div>
-        <div className="seg glass" role="group" aria-label="When">
-          {([['now', 'Right now'], ['tonight', 'Tonight'], ['weekend', 'This weekend']] as [When, string][]).map(([k, l]) => (
-            <button key={k} aria-pressed={when === k} onClick={() => setWhen(k)}>{l}</button>
-          ))}
-        </div>
-      </div>
 
-      <p className="pulse">
-        {active.length === 0
-          ? 'Nothing is live yet tonight. Check back after sunset.'
-          : <>
-              <b>{headline.replace(' 🔥', '')}.</b>{' '}
-              {active.length} {active.length === 1 ? 'place is' : 'places are'} live
-              {popping ? <>, <span style={{ color: 'var(--pop)' }}>{popping} popping</span></> : null}
-              {heating ? <>, {heating} heating up</> : null}.
-            </>}
-      </p>
+        <p className="pulse">
+          {active.length === 0
+            ? 'Nothing is live yet tonight. Check back after sunset.'
+            : <>
+                <b>{headline}.</b>{' '}
+                {active.length} {active.length === 1 ? 'place is' : 'places are'} live
+                {popping ? <>, <span style={{ color: 'var(--pop)' }}>{popping} popping</span></> : null}
+                {heating ? <>, {heating} heating up</> : null}.
+              </>}
+        </p>
+        </div>
+      </header>
 
       <div className="searchrow">
         <label className="search glass">
