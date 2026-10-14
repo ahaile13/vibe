@@ -27,7 +27,18 @@ function windows(r: () => number, x: number, w: number, top: number, density: nu
   for (let y = top + 10; y < BASE - 8; y += 9) {
     for (let wx = x + 5; wx < x + w - 5; wx += 7) {
       if (r() < density) {
-        out.push(<rect key={`${key}-${wx}-${y}`} x={wx} y={y} width={2.4} height={3.4} fill="var(--sky-win)" opacity={(0.18 + r() * 0.55).toFixed(2)} />);
+        const o = 0.18 + r() * 0.55;
+        // a soft halo behind the brighter windows
+        if (o > 0.55 && r() < 0.6) out.push(<circle key={`${key}-${wx}-${y}h`} cx={wx + 1.2} cy={y + 1.7} r={6} fill="url(#sky-bokeh)" opacity={0.5} />);
+        // about one in five windows twinkles, each on its own rhythm
+        const tw = r() < 0.2;
+        out.push(
+          <rect
+            key={`${key}-${wx}-${y}`} x={wx} y={y} width={2.4} height={3.4} fill="var(--sky-win)" opacity={o.toFixed(2)}
+            className={tw ? 'tw' : undefined}
+            style={tw ? { animationDelay: `${(r() * 8).toFixed(2)}s`, animationDuration: `${(2.4 + r() * 4.5).toFixed(2)}s` } : undefined}
+          />,
+        );
       }
     }
   }
@@ -50,7 +61,7 @@ function landmark(src: Landmark, r: () => number, i: number): ReactNode {
       const dots: ReactNode[] = [];
       for (let a = 0; a < 46; a++) {
         const th = r() * Math.PI * 2, rr = Math.sqrt(r()) * 22;
-        dots.push(<circle key={`${k}d${a}`} cx={x + Math.cos(th) * rr} cy={cy + Math.sin(th) * rr * 0.9} r={1.3} fill="var(--sky-win)" opacity={(0.35 + r() * 0.6).toFixed(2)} />);
+        dots.push(<circle key={`${k}d${a}`} cx={x + Math.cos(th) * rr} cy={cy + Math.sin(th) * rr * 0.9} r={1.3} fill="var(--sky-win)" opacity={(0.35 + r() * 0.6).toFixed(2)} className="tw" style={{ animationDelay: `${(r() * 3).toFixed(2)}s`, animationDuration: `${(1.6 + r() * 2).toFixed(2)}s` }} />);
       }
       return (
         <g key={k}>
@@ -332,7 +343,7 @@ export function Skyline({ city = DEFAULT_CITY, className = '' }: { city?: City; 
     }
     const lights: ReactNode[] = [];
     for (let i = 0; i < 9; i++) {
-      lights.push(<circle key={`l${i}`} cx={r() * W} cy={BASE - 20 - r() * 60} r={18 + r() * 34} fill="url(#sky-bokeh)" opacity={(0.25 + r() * 0.35).toFixed(2)} />);
+      lights.push(<circle key={`l${i}`} cx={r() * W} cy={BASE - 20 - r() * 60} r={18 + r() * 34} fill="url(#sky-bokeh)" opacity={(0.25 + r() * 0.35).toFixed(2)} className="glow" style={{ animationDelay: `${(r() * 6).toFixed(2)}s` }} />);
     }
     return { land, back, fillers, front, lights, landmarks: city.landmarks.map((l, i) => landmark(l, r, i)) };
   }, [city]);
