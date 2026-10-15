@@ -214,7 +214,14 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       sb.from('blocks').select('blocked_id').eq('blocker_id', u.id),
       sb.from('helpful_votes').select('comment_id').eq('user_id', u.id).order('created_at', { ascending: false }).limit(500),
     ]);
-    setProfile((p.data as Profile | null) ?? null);
+    let prof = (p.data as Profile | null) ?? null;
+    if (!prof && !p.error) {
+      // Account predates its profile (e.g. signed up before setup): create it, then load it.
+      await sb.rpc('ensure_my_profile');
+      const again = await sb.from('profiles').select('id,username,bio,home_city,avatar_url').eq('id', u.id).maybeSingle();
+      prof = (again.data as Profile | null) ?? null;
+    }
+    setProfile(prof);
     setSaved(new Set(((s.data ?? []) as { event_id: string }[]).map((x) => x.event_id)));
     const mr: Record<string, MyRating> = {};
     for (const x of (r.data ?? []) as { event_id: string; vibe: MyRating['vibe']; worth: boolean; updated_at: string }[]) {
