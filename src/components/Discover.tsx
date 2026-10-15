@@ -25,7 +25,7 @@ function endOfNight(now: number) {
 
 export function Discover() {
   const params = useSearchParams();
-  const { events, stats, now, dist, status, userLoc, posts, openCreate, locate, city, setSheet, theme, setThemeMode } = useLive();
+  const { events, stats, now, dist, status, userLoc, posts, openCreate, locate, city, setSheet, theme, setThemeMode, sampleIds, setShowSamples } = useLive();
   const [when, setWhen] = useState<When>('now');
   const [cat, setCat] = useState('For You');
   const [q, setQ] = useState('');
@@ -61,6 +61,14 @@ export function Discover() {
   return (
     <>
       <SetupNotice />
+      {sampleIds.size > 0 && (
+        <div className="notice" role="status">
+          <span>
+            Launch spots are showing <b>sample ratings</b> until real ones come in. Rate a spot you’re at to make it real.{' '}
+            <button className="linkb" style={{ padding: 0 }} onClick={() => setShowSamples(false)}>Hide samples</button>
+          </span>
+        </div>
+      )}
       <header className="hero">
         <div className="hero-in">
         <div className="top">

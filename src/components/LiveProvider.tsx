@@ -8,6 +8,7 @@ import { computeStats, isActive, rankAll, type Stats } from '@/lib/scoring';
 import { distanceMi, getFix, type Fix } from '@/lib/geo';
 import { CITIES, CITY_LIST, DEFAULT_CITY, type City } from '@/lib/city';
 import { THEME_KEY, resolveTheme, type Theme, type ThemeMode } from '@/lib/theme';
+import { SAMPLE_KEY, needsSample, sampleRows } from '@/lib/sample';
 
 const CITY_KEY = 'vibes.city';
 /** Events farther than this from the selected city's center belong to another city. */
@@ -52,6 +53,10 @@ interface LiveValue {
   setThemeMode: (m: ThemeMode) => void;
   eventById: (id: string) => EventRow | undefined;
   stats: Record<string, Stats>;
+  /** Event ids currently showing sample ratings. */
+  sampleIds: Set<string>;
+  showSamples: boolean;
+  setShowSamples: (on: boolean) => void;
   rows: Record<string, RatingRow[]>;
   comments: Record<string, CommentRow[]>;
   posts: Record<string, PostRow[]>;
@@ -387,12 +392,36 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     [userLoc, city],
   );
 
-  const stats = useMemo(() => {
+  const [showSamples, setShowSamplesState] = useState(true);
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(SAMPLE_KEY) === 'off') setShowSamplesState(false);
+    } catch {
+      /* default: on */
+    }
+  }, []);
+  const setShowSamples = useCallback((on: boolean) => {
+    setShowSamplesState(on);
+    try {
+      localStorage.setItem(SAMPLE_KEY, on ? 'on' : 'off');
+    } catch {
+      /* not saved */
+    }
+  }, []);
+
+  const { stats, sampleIds } = useMemo(() => {
     const o: Record<string, Stats> = {};
-    for (const e of events) o[e.id] = computeStats(e, rows[e.id] ?? [], now);
+    const ids = new Set<string>();
+    for (const e of events) {
+      const real = rows[e.id] ?? [];
+      if (showSamples && needsSample(e, real.length, now)) {
+        ids.add(e.id);
+        o[e.id] = computeStats(e, real.concat(sampleRows(e, now)), now);
+      } else o[e.id] = computeStats(e, real, now);
+    }
     rankAll(events, o, dist, now);
-    return o;
-  }, [events, rows, now, dist]);
+    return { stats: o, sampleIds: ids };
+  }, [events, rows, now, dist, showSamples]);
 
   const comments = useMemo(() => {
     if (!blocked.size) return rawComments;
@@ -575,6 +604,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
 
   const value: LiveValue = {
     status, loadError, authReady, user, profile, setProfile,
+    sampleIds, showSamples, setShowSamples,
     events: cityEvents, city, chooseCity, themeMode, theme, setThemeMode: chooseTheme, eventById, stats, rows, comments, posts, now, userLoc, dist,
     saved, myRatings, helped,
     reload, refreshEvent, fetchEvent, addEvent,

@@ -17,7 +17,7 @@ const VIBE_LABEL = { popping: '🔥 Popping', mid: '😐 Mid', dead: '💀 Dead'
 
 export function ProfileView() {
   const router = useRouter();
-  const { user, authReady, profile, setProfile, saved, myRatings, stats, events, now, userLoc, locate, openCreate, toast, status, city, setSheet, themeMode, setThemeMode } = useLive();
+  const { user, authReady, profile, setProfile, saved, myRatings, stats, events, now, userLoc, locate, openCreate, toast, status, city, setSheet, themeMode, setThemeMode, showSamples, setShowSamples } = useLive();
   const [counts, setCounts] = useState({ comments: 0, posts: 0 });
   const [extra, setExtra] = useState<EventRow[]>([]);
   const [editing, setEditing] = useState(false);
@@ -135,6 +135,13 @@ export function ProfileView() {
             ))}
           </div>
           <p className="foot-note">Auto uses the day theme from 6:30 AM to 6:30 PM and night after dark.</p>
+          <div className="tog" style={{ marginTop: 14 }}>
+            <div>
+              <b style={{ fontWeight: 600 }}>Sample ratings</b>
+              <div style={{ color: 'var(--muted)', fontSize: 13 }}>Show labeled sample activity on launch spots until real ratings come in.</div>
+            </div>
+            <button className="sw" role="switch" aria-checked={showSamples} aria-label="Sample ratings" onClick={() => setShowSamples(!showSamples)} />
+          </div>
         </section>
         <section className="panel">
           <h2>Location</h2>

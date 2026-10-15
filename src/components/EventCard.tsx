@@ -9,7 +9,7 @@ import { fmtMi } from '@/lib/geo';
 import type { EventRow } from '@/lib/types';
 
 export function EventCard({ e, variant }: { e: EventRow; variant?: 'feat' | 'mini' }) {
-  const { stats, posts, comments, now, dist, saved, toggleSave } = useLive();
+  const { stats, posts, comments, now, dist, saved, toggleSave, sampleIds } = useLive();
   const s = stats[e.id];
   if (!s) return null;
   const tc = variant === 'mini' ? undefined : topComment(comments[e.id], now);
@@ -45,6 +45,7 @@ export function EventCard({ e, variant }: { e: EventRow; variant?: 'feat' | 'min
           <StatusPill s={s} />
           <WorthText s={s} />
           <MomText s={s} />
+          {sampleIds.has(e.id) && <span className="sample" title="Sample ratings until real ones come in">Sample</span>}
         </div>
         <div className="meta">{metaText(e, s, now)}</div>
         {tc && variant === 'feat' && <p className="quote">“{tc.body}”</p>}

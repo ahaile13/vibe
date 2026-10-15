@@ -18,7 +18,7 @@ const CONF_LABEL = { high: 'High confidence', build: 'Building confidence', none
 export function EventDetail({ id }: { id: string }) {
   const router = useRouter();
   const live = useLive();
-  const { eventById, fetchEvent, refreshEvent, stats, rows, posts, now, dist, saved, toggleSave, startRate, openCapture, share, status, myRatings, openLightbox, user } = live;
+  const { eventById, fetchEvent, refreshEvent, stats, rows, posts, now, dist, saved, toggleSave, startRate, openCapture, share, status, myRatings, openLightbox, user , sampleIds } = live;
   const [missing, setMissing] = useState(false);
   const ev = eventById(id);
 
@@ -117,6 +117,7 @@ export function EventDetail({ id }: { id: string }) {
             <div className="foot-note">
               Based on {plural(s.n, 'verified rating')}
               {s.lastAt ? `, last one ${ago(now - s.lastAt)}` : ''}. {ended ? 'Final result.' : 'Recent ratings count most.'}
+              {sampleIds.has(ev.id) && ' Includes sample ratings for this launch listing; real ratings replace them once 5 people rate.'}
             </div>
           </section>
         )}
