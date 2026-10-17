@@ -42,6 +42,8 @@ interface LiveValue {
   authReady: boolean;
   user: User | null;
   profile: Profile | null;
+  /** Admins can delete any event (granted in the SQL editor, see the admins migration). */
+  isAdmin: boolean;
   setProfile: (p: Profile) => void;
   events: EventRow[];
   city: City;
@@ -118,6 +120,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   const [authReady, setAuthReady] = useState(!supabaseConfigured);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [events, setEvents] = useState<EventRow[]>([]);
   const [rows, setRows] = useState<Record<string, RatingRow[]>>({});
   const [rawComments, setComments] = useState<Record<string, CommentRow[]>>({});
@@ -205,15 +208,16 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     const sb = getSupabase();
     if (!sb) return;
     if (!u) {
-      setProfile(null); setSaved(new Set()); setMyRatings({}); setBlocked(new Set()); setHelped(new Set());
+      setProfile(null); setIsAdmin(false); setSaved(new Set()); setMyRatings({}); setBlocked(new Set()); setHelped(new Set());
       return;
     }
-    const [p, s, r, b, h] = await Promise.all([
+    const [p, s, r, b, h, a] = await Promise.all([
       sb.from('profiles').select('id,username,bio,home_city,avatar_url').eq('id', u.id).maybeSingle(),
       sb.from('saves').select('event_id').eq('user_id', u.id),
       sb.from('ratings').select('event_id,vibe,worth,updated_at').eq('user_id', u.id).order('updated_at', { ascending: false }).limit(300),
       sb.from('blocks').select('blocked_id').eq('blocker_id', u.id),
       sb.from('helpful_votes').select('comment_id').eq('user_id', u.id).order('created_at', { ascending: false }).limit(500),
+      sb.rpc('is_admin'),
     ]);
     let prof = (p.data as Profile | null) ?? null;
     if (!prof && !p.error) {
@@ -223,6 +227,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       prof = (again.data as Profile | null) ?? null;
     }
     setProfile(prof);
+    setIsAdmin(a.data === true);
     setSaved(new Set(((s.data ?? []) as { event_id: string }[]).map((x) => x.event_id)));
     const mr: Record<string, MyRating> = {};
     for (const x of (r.data ?? []) as { event_id: string; vibe: MyRating['vibe']; worth: boolean; updated_at: string }[]) {
@@ -491,9 +496,10 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     const uid = userRef.current?.id;
     if (!sb || !uid) return false;
     // Ratings, comments, posts and saves go with it (on delete cascade).
-    const { data, error } = await sb.from('events').delete().eq('id', id).eq('created_by', uid).select('id');
+    // Row security decides: the creator or an admin.
+    const { data, error } = await sb.from('events').delete().eq('id', id).select('id');
     if (error || !data?.length) {
-      toast(error ? 'Couldn’t delete the event. Try again.' : 'Only the person who created this event can delete it.');
+      toast(error ? 'Couldn’t delete the event. Try again.' : 'Only the person who created this event, or an admin, can delete it.');
       return false;
     }
     setEvents((prev) => prev.filter((e) => e.id !== id));
@@ -603,7 +609,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   }
 
   const value: LiveValue = {
-    status, loadError, authReady, user, profile, setProfile,
+    status, loadError, authReady, user, profile, setProfile, isAdmin,
     events: cityEvents, city, chooseCity, themeMode, theme, setThemeMode: chooseTheme, eventById, stats, rows, comments, posts, now, userLoc, dist,
     saved, myRatings, helped,
     reload, refreshEvent, fetchEvent, addEvent,

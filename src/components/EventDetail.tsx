@@ -18,7 +18,7 @@ const CONF_LABEL = { high: 'High confidence', build: 'Building confidence', none
 export function EventDetail({ id }: { id: string }) {
   const router = useRouter();
   const live = useLive();
-  const { eventById, fetchEvent, refreshEvent, stats, rows, posts, now, dist, saved, toggleSave, startRate, openCapture, share, status, myRatings, openLightbox, user, deleteEvent } = live;
+  const { eventById, fetchEvent, refreshEvent, stats, rows, posts, now, dist, saved, toggleSave, startRate, openCapture, share, status, myRatings, openLightbox, user, deleteEvent, isAdmin } = live;
   const [missing, setMissing] = useState(false);
   const [confirmDel, setConfirmDel] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -161,9 +161,9 @@ export function EventDetail({ id }: { id: string }) {
           {ev.is_demo && <p className="foot-note">Launch listing added by VIBES. Hours are approximate.</p>}
         </section>
 
-        {isOwner && (
+        {(isOwner || isAdmin) && (
           <section className="panel owner">
-            <h2>Your event</h2>
+            <h2>{isOwner ? 'Your event' : 'Admin'}</h2>
             {!confirmDel ? (
               <button className="btn gl danger" onClick={() => setConfirmDel(true)}><Icon name="trash" />Delete event</button>
             ) : (

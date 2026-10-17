@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Map as MLMap, Marker } from 'maplibre-gl';
 import { useLive } from './LiveProvider';
 import { Cover } from './Media';
@@ -13,9 +12,45 @@ import { isActive } from '@/lib/scoring';
 import { fmtMi } from '@/lib/geo';
 import type { EventRow } from '@/lib/types';
 
-// Free dark basemap, no API key. Swap via NEXT_PUBLIC_MAP_STYLE (e.g. a Mapbox or MapTiler style URL).
-const STYLE = process.env.NEXT_PUBLIC_MAP_STYLE || 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+// Free CARTO basemaps, no API key: dark streets at night, light streets by day.
+// NEXT_PUBLIC_MAP_STYLE (e.g. a MapTiler style URL) overrides both.
+const STYLES = {
+  night: process.env.NEXT_PUBLIC_MAP_STYLE || 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+  day: process.env.NEXT_PUBLIC_MAP_STYLE || 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+};
 type MapLib = typeof import('maplibre-gl');
+
+/**
+ * maplibre is loaded as a plain script from the CDN rather than bundled. Its package is a UMD
+ * bundle marked "type": "module", and once the bundler wraps it the map comes up but its tile
+ * worker never draws the streets (a black map). The script tag is the setup maplibre documents.
+ */
+const ML_CDN = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.0/dist';
+let mlLoading: Promise<MapLib> | null = null;
+function loadMapLib(): Promise<MapLib> {
+  const w = window as unknown as { maplibregl?: MapLib };
+  if (w.maplibregl) return Promise.resolve(w.maplibregl);
+  if (!document.getElementById('maplibre-css')) {
+    const link = document.createElement('link');
+    link.id = 'maplibre-css';
+    link.rel = 'stylesheet';
+    link.href = `${ML_CDN}/maplibre-gl.css`;
+    document.head.appendChild(link);
+  }
+  mlLoading ??= new Promise<MapLib>((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = `${ML_CDN}/maplibre-gl.js`;
+    s.async = true;
+    s.onload = () => (w.maplibregl ? resolve(w.maplibregl) : reject(new Error('maplibre loaded without its API')));
+    s.onerror = () => {
+      mlLoading = null;
+      s.remove();
+      reject(new Error('maplibre failed to download'));
+    };
+    document.head.appendChild(s);
+  });
+  return mlLoading;
+}
 const COLOR: Record<string, string> = { pop: '#EE8B5A', mid: '#D9B866', dead: '#7E8B96' };
 const FILTERS: [string, string][] = [
   ['active', 'Active now'], ['pop', 'Popping only'], ['worth', '80%+ worth it'], ['heat', 'Heating up'], ['free', 'Free entry'], ['near', 'Within 2 mi'],
@@ -23,7 +58,8 @@ const FILTERS: [string, string][] = [
 
 export function MapView() {
   const router = useRouter();
-  const { events, stats, now, dist, posts, comments, userLoc, locate, city } = useLive();
+  const { events, stats, now, dist, posts, comments, userLoc, locate, city, theme } = useLive();
+  const styleTheme = useRef(theme);
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<MLMap | null>(null);
   const markers = useRef<Map<string, Marker>>(new Map());
@@ -50,16 +86,12 @@ export function MapView() {
     let cancelled = false;
     (async () => {
       try {
-        const mod = (await import('maplibre-gl')) as unknown as Partial<MapLib> & { default?: MapLib };
-        // maplibre ships a UMD bundle. Depending on the version and bundler, the API lands on the
-        // module, on its default export, or (5.x marked "type": "module") only on window.maplibregl.
-        const ml = [mod.default, mod, (globalThis as unknown as { maplibregl?: MapLib }).maplibregl].find((x) => typeof x?.Map === 'function') as MapLib | undefined;
-        if (!ml) throw new Error('maplibre-gl did not load');
+        const ml = await loadMapLib();
         if (cancelled || !box.current) return;
         lib.current = ml;
         const m = new ml.Map({
           container: box.current,
-          style: STYLE,
+          style: STYLES[styleTheme.current],
           center: [city.center.lng, city.center.lat + 0.012],
           zoom: 12.2,
           attributionControl: { compact: true },
@@ -110,6 +142,14 @@ export function MapView() {
       el.setAttribute('aria-label', `${e.name}`);
     }
   }, [list, stats, now, ready, sel]);
+
+  // swap the basemap with the day/night theme (markers are DOM elements and stay put)
+  useEffect(() => {
+    const m = map.current;
+    if (!m || !ready || styleTheme.current === theme) return;
+    styleTheme.current = theme;
+    if (STYLES.day !== STYLES.night) m.setStyle(STYLES[theme]);
+  }, [theme, ready]);
 
   // follow the selected city
   useEffect(() => {
