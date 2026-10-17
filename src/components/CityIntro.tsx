@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 're
 import { CITY_LIST } from '@/lib/city';
 import { useLive } from './LiveProvider';
 import { Skyline } from './Skyline';
+import { Icon } from './Icon';
 import { INTRO_KEY } from '@/lib/intro';
 
 const ALPHA = [...CITY_LIST].sort((a, b) => a.name.localeCompare(b.name));
@@ -15,7 +16,7 @@ const indexOf = (id: string) => Math.max(0, ALPHA.findIndex((c) => c.id === id))
  * the centered city enters the app there.
  */
 export function CityIntro() {
-  const { city, chooseCity } = useLive();
+  const { city, chooseCity, theme, setThemeMode } = useLive();
   const [open, setOpen] = useState(true);
   const [leaving, setLeaving] = useState(false);
   const [idx, setIdx] = useState(() => indexOf(city.id));
@@ -149,6 +150,15 @@ export function CityIntro() {
       </div>
 
       <div className="intro-mark" aria-hidden="true">v<b /></div>
+
+      <button
+        className="intro-theme"
+        onClick={() => setThemeMode(theme === 'day' ? 'night' : 'day')}
+        aria-label={theme === 'day' ? 'Switch to night theme' : 'Switch to day theme'}
+        title={theme === 'day' ? 'Night theme' : 'Day theme'}
+      >
+        <Icon name={theme === 'day' ? 'moon' : 'sun'} />
+      </button>
 
       <div className="intro-mid">
         <div className="intro-track" ref={track} onScroll={onScroll} onKeyDown={onKey} role="listbox" aria-label="Cities, A to Z" aria-activedescendant={`ci-${current.id}`}>

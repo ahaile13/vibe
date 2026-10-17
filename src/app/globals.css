@@ -493,6 +493,12 @@ html[data-intro] .intro { position: fixed; inset: 0; z-index: 90; display: flex;
   box-shadow: 0 8px 26px var(--shadow); transition: transform 0.2s var(--ease); }
 .intro-go:active { transform: scale(0.96); }
 .intro-layer .skyline { overflow: visible; }
+.intro-theme { position: absolute; z-index: 3; top: calc(env(safe-area-inset-top, 0px) + 18px); right: 18px; width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center; color: var(--muted); background: var(--glass); border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); transition: color 0.2s, transform 0.2s var(--ease); }
+.intro-theme:hover { color: var(--text); }
+.intro-theme:active { transform: scale(0.92); }
+.intro-theme .ic { width: 17px; height: 17px; }
 @media (min-width: 900px) and (min-aspect-ratio: 4/3) {
   .intro-layer .skyline { bottom: 36px; height: 58vh; }
   .intro-sky::after { height: 37px; }
