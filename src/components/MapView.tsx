@@ -50,9 +50,11 @@ export function MapView() {
     let cancelled = false;
     (async () => {
       try {
-        const mod = await import('maplibre-gl');
-        // maplibre ships UMD; depending on bundler interop the API is on default.
-        const ml = ((mod as unknown as { default?: MapLib }).default ?? mod) as MapLib;
+        const mod = (await import('maplibre-gl')) as unknown as Partial<MapLib> & { default?: MapLib };
+        // maplibre ships a UMD bundle. Depending on the version and bundler, the API lands on the
+        // module, on its default export, or (5.x marked "type": "module") only on window.maplibregl.
+        const ml = [mod.default, mod, (globalThis as unknown as { maplibregl?: MapLib }).maplibregl].find((x) => typeof x?.Map === 'function') as MapLib | undefined;
+        if (!ml) throw new Error('maplibre-gl did not load');
         if (cancelled || !box.current) return;
         lib.current = ml;
         const m = new ml.Map({
@@ -64,10 +66,11 @@ export function MapView() {
         });
         m.addControl(new ml.NavigationControl({ showCompass: false }), 'bottom-right');
         m.on('load', () => setReady(true));
-        m.on('error', () => {});
+        m.on('error', (e) => console.warn('map:', e.error?.message ?? e));
         m.on('click', () => setSel(null));
         map.current = m;
-      } catch {
+      } catch (err) {
+        console.error('map failed to start', err);
         setFailed(true);
       }
     })();

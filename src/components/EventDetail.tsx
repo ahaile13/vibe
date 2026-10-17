@@ -18,8 +18,10 @@ const CONF_LABEL = { high: 'High confidence', build: 'Building confidence', none
 export function EventDetail({ id }: { id: string }) {
   const router = useRouter();
   const live = useLive();
-  const { eventById, fetchEvent, refreshEvent, stats, rows, posts, now, dist, saved, toggleSave, startRate, openCapture, share, status, myRatings, openLightbox, user } = live;
+  const { eventById, fetchEvent, refreshEvent, stats, rows, posts, now, dist, saved, toggleSave, startRate, openCapture, share, status, myRatings, openLightbox, user, deleteEvent } = live;
   const [missing, setMissing] = useState(false);
+  const [confirmDel, setConfirmDel] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const ev = eventById(id);
 
   useEffect(() => {
@@ -158,6 +160,35 @@ export function EventDetail({ id }: { id: string }) {
           {ev.description && <p style={{ margin: '14px 0 0', color: 'var(--muted)' }}>{ev.description}</p>}
           {ev.is_demo && <p className="foot-note">Launch listing added by VIBES. Hours are approximate.</p>}
         </section>
+
+        {isOwner && (
+          <section className="panel owner">
+            <h2>Your event</h2>
+            {!confirmDel ? (
+              <button className="btn gl danger" onClick={() => setConfirmDel(true)}><Icon name="trash" />Delete event</button>
+            ) : (
+              <>
+                <p style={{ margin: '0 0 12px', fontSize: 14 }}>Delete “{ev.name}”? Its ratings, comments, photos and clips go with it. This can’t be undone.</p>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <button
+                    className="btn danger-solid"
+                    disabled={deleting}
+                    onClick={async () => {
+                      setDeleting(true);
+                      const ok = await deleteEvent(ev.id);
+                      setDeleting(false);
+                      if (ok) router.replace('/');
+                      else setConfirmDel(false);
+                    }}
+                  >
+                    {deleting ? <span className="spin sm" /> : 'Yes, delete it'}
+                  </button>
+                  <button className="btn gl" disabled={deleting} onClick={() => setConfirmDel(false)}>Keep it</button>
+                </div>
+              </>
+            )}
+          </section>
+        )}
       </div>
 
       <div className="abar glass">

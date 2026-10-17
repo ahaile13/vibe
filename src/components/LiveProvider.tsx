@@ -73,6 +73,8 @@ interface LiveValue {
   openReport: (target: 'comment' | 'post', id: string, userId: string, username: string) => void;
   openLightbox: (post: PostRow) => void;
   toggleSave: (id: string) => Promise<void>;
+  /** Deletes an event the signed-in person created. Resolves true when it is gone. */
+  deleteEvent: (id: string) => Promise<boolean>;
   toggleHelpful: (c: CommentRow) => Promise<void>;
   block: (userId: string) => Promise<void>;
   locate: (quiet?: boolean) => Promise<void>;
@@ -484,6 +486,27 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     setSheet({ kind: 'create' });
   }
 
+  async function deleteEvent(id: string): Promise<boolean> {
+    const sb = getSupabase();
+    const uid = userRef.current?.id;
+    if (!sb || !uid) return false;
+    // Ratings, comments, posts and saves go with it (on delete cascade).
+    const { data, error } = await sb.from('events').delete().eq('id', id).eq('created_by', uid).select('id');
+    if (error || !data?.length) {
+      toast(error ? 'Couldn’t delete the event. Try again.' : 'Only the person who created this event can delete it.');
+      return false;
+    }
+    setEvents((prev) => prev.filter((e) => e.id !== id));
+    setSaved((prev) => {
+      if (!prev.has(id)) return prev;
+      const n = new Set(prev);
+      n.delete(id);
+      return n;
+    });
+    toast('Event deleted');
+    return true;
+  }
+
   async function toggleSave(id: string) {
     const sb = getSupabase();
     if (!sb || !requireLogin()) return;
@@ -589,7 +612,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       if (requireLogin()) setSheet({ kind: 'report', target, id, userId, username });
     },
     openLightbox: (post) => setSheet({ kind: 'lightbox', post }),
-    toggleSave, toggleHelpful, block, locate, share, noteMyRating,
+    toggleSave, deleteEvent, toggleHelpful, block, locate, share, noteMyRating,
     sheet, setSheet, modal, setModal, toastMsg, toast,
   };
 

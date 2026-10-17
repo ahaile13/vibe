@@ -280,6 +280,8 @@ main.page { min-height: 100dvh; padding: 20px 20px 132px; max-width: 1220px; mar
 .btn.gl { border: 1px solid var(--line2); background: var(--tint-1); }
 .btn:disabled, .btn[aria-disabled='true'] { opacity: 0.4; cursor: not-allowed; }
 .btn.wide { width: 100%; }
+.btn.danger { color: var(--no); }
+.btn.danger-solid { background: var(--no); color: #fff; }
 .btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .linkb { color: var(--muted); font-size: 13.5px; text-decoration: underline; text-decoration-color: var(--line2); text-underline-offset: 4px; padding: 10px; }
 
