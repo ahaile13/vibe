@@ -158,7 +158,7 @@ export function EventDetail({ id }: { id: string }) {
             <dt>Saved by</dt><dd>{ev.save_count} {ev.save_count === 1 ? 'person' : 'people'}</dd>
           </dl>
           {ev.description && <p style={{ margin: '14px 0 0', color: 'var(--muted)' }}>{ev.description}</p>}
-          {ev.is_demo && <p className="foot-note">Launch listing added by VIBES. Hours are approximate.</p>}
+          {ev.is_demo && <p className="foot-note">Test listing added by vibes. Hours are approximate and its ratings are sample data.</p>}
         </section>
 
         {(isOwner || isAdmin) && (
