@@ -7,6 +7,7 @@ import { useLive } from './LiveProvider';
 import { Layers } from './Layers';
 import { Logo, Mark } from './Logo';
 import { Skyline } from './Skyline';
+import { CityIntro } from './CityIntro';
 
 const SIDE: [string, string, IconName][] = [
   ['/', 'Discover', 'compass'],
@@ -58,6 +59,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
       )}
       <Layers />
+      {!isAuth && <CityIntro />}
     </>
   );
 }

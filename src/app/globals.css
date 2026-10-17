@@ -455,3 +455,47 @@ table.w td:last-child { text-align: right; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
+
+/* ---------------------------------------------------------------- opening city screen */
+.intro { display: none; }
+html[data-intro] { overflow: hidden; }
+html[data-intro] .intro { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; align-items: center; overflow: hidden;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--sky-top) 34%, var(--sky-haze) 66%, var(--bg) 100%);
+  padding: calc(env(safe-area-inset-top, 0px) + 34px) 0 calc(env(safe-area-inset-bottom, 0px) + 24px); }
+.intro.leaving { animation: introout 0.52s var(--ease) forwards; }
+@keyframes introout { to { opacity: 0; transform: scale(1.04); } }
+.intro-sky { position: absolute; inset: 0; pointer-events: none; }
+.intro-layer { position: absolute; inset: 0; animation: skyin 0.6s var(--ease); }
+.intro-layer.out { animation: introfade 0.6s var(--ease) forwards; }
+@keyframes introfade { to { opacity: 0; } }
+.intro-layer .skyline { position: absolute; left: 0; bottom: clamp(56px, 9vh, 110px); width: 100%; height: clamp(280px, 88vw, 62vh); }
+.intro-sky::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: calc(clamp(56px, 9vh, 110px) + 1px);
+  background: linear-gradient(180deg, var(--sky-front) 0%, var(--bg) 100%); }
+.intro-sky::before { content: ''; position: absolute; inset: 0; z-index: 1;
+  background: radial-gradient(80% 26% at 50% 38%, color-mix(in srgb, var(--bg) 46%, transparent), transparent 72%); }
+.intro-mark { position: relative; z-index: 2; font: 600 64px/1 var(--font-head); letter-spacing: -0.04em; color: var(--text); padding-right: 14px;
+  text-shadow: 0 2px 24px var(--pulse-shadow); animation: fade 0.8s var(--ease); }
+.intro-mark b { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: var(--accent); right: 0; top: 6px;
+  box-shadow: 0 0 16px var(--accent); animation: breathe 3.2s ease-in-out infinite; }
+.intro-mid { position: absolute; z-index: 2; left: 0; right: 0; top: 38%; transform: translateY(-50%); display: grid; justify-items: center; gap: 16px; }
+.intro-track { width: 100%; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain;
+  padding: 10px 50%; outline: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); }
+.intro-track::-webkit-scrollbar { display: none; }
+.intro-city { flex: none; padding-inline: clamp(14px, 4vw, 30px) !important; scroll-snap-align: center; transform-origin: 50% 60%; display: grid; justify-items: center; gap: 2px; padding: 6px 0;
+  transform: scale(var(--s, 0.8)); opacity: var(--o, 0.5); will-change: transform, opacity; }
+.intro-city .nm { font: 600 clamp(34px, 10vw, 54px)/1.1 var(--font-head); letter-spacing: -0.02em; white-space: nowrap; color: var(--text); text-shadow: 0 2px 22px var(--pulse-shadow); }
+.intro-city .st { font: 600 12px/1 var(--font-body); letter-spacing: 0.32em; padding-left: 0.32em; color: var(--accent); opacity: calc(0.35 + var(--c, 0) * 0.65); }
+.intro-city:focus-visible { outline: none; }
+:root[data-theme='day'] .intro-city .st { color: #9a7434; }
+.intro-city:focus-visible .nm { text-decoration: underline 2px var(--accent); text-underline-offset: 8px; }
+.intro-go { font: 600 13px/1 var(--font-body); letter-spacing: 0.06em; color: var(--text); padding: 12px 22px; border-radius: 999px;
+  background: var(--glass); border: 1px solid var(--line2); -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 8px 26px var(--shadow); transition: transform 0.2s var(--ease); }
+.intro-go:active { transform: scale(0.96); }
+.intro-layer .skyline { overflow: visible; }
+@media (min-width: 900px) and (min-aspect-ratio: 4/3) {
+  .intro-layer .skyline { bottom: 36px; height: 58vh; }
+  .intro-sky::after { height: 37px; }
+  .intro-mid { top: 25%; }
+}
+@media (prefers-reduced-motion: reduce) { .intro-layer, .intro-layer.out, .intro.leaving, .intro-mark { animation-duration: 0.01s; } }

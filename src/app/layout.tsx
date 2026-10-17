@@ -4,6 +4,7 @@ import './globals.css';
 import { LiveProvider } from '@/components/LiveProvider';
 import { AppShell } from '@/components/AppShell';
 import { THEME_BOOT } from '@/lib/theme';
+import { INTRO_BOOT } from '@/lib/intro';
 
 // One rounded geometric family for everything (variable weight 300–700).
 const quicksand = Quicksand({ subsets: ['latin'], variable: '--font-q' });
@@ -33,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${quicksand.variable} ${poster.variable}`} data-theme="night" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT + INTRO_BOOT }} />
       </head>
       <body>
         <LiveProvider>
