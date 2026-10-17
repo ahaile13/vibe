@@ -1,5 +1,6 @@
 'use client';
 
+import { openCityIntro } from '@/lib/intro';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -17,7 +18,7 @@ const VIBE_LABEL = { popping: '🔥 Popping', mid: '😐 Mid', dead: '💀 Dead'
 
 export function ProfileView() {
   const router = useRouter();
-  const { user, authReady, profile, setProfile, saved, myRatings, stats, events, now, userLoc, locate, openCreate, toast, status, city, setSheet, themeMode, setThemeMode } = useLive();
+  const { user, authReady, profile, setProfile, saved, myRatings, stats, events, now, userLoc, locate, openCreate, toast, status, city, themeMode, setThemeMode } = useLive();
   const [counts, setCounts] = useState({ comments: 0, posts: 0 });
   const [extra, setExtra] = useState<EventRow[]>([]);
   const [editing, setEditing] = useState(false);
@@ -141,7 +142,7 @@ export function ProfileView() {
           <p style={{ margin: '0 0 12px', fontSize: 14 }}>{userLoc ? 'Distances use your location.' : `Distances are measured from downtown ${city.name}.`}</p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button className="btn gl" onClick={() => locate(false)}><Icon name="locate" />Use my location</button>
-            <button className="btn gl" onClick={() => setSheet({ kind: 'city' })}><Icon name="map" />City: {city.name}</button>
+            <button className="btn gl" onClick={openCityIntro}><Icon name="map" />City: {city.name}</button>
             <button className="btn gl" onClick={openCreate}><Icon name="plus" />Create an event</button>
           </div>
           <p className="foot-note">Location is checked once each time you rate or post, never tracked in the background, and never shown to anyone.</p>

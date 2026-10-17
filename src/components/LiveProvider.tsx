@@ -27,7 +27,6 @@ export type Sheet =
   | { kind: 'create' }
   | { kind: 'report'; target: 'comment' | 'post'; id: string; userId: string; username: string }
   | { kind: 'lightbox'; post: PostRow }
-  | { kind: 'city' }
   | null;
 
 export type Modal =

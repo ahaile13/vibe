@@ -12,6 +12,7 @@ import { SetupNotice } from './AppShell';
 import { isActive } from '@/lib/scoring';
 import { fmtMi } from '@/lib/geo';
 import { Wordmark } from './Logo';
+import { openCityIntro } from '@/lib/intro';
 import type { EventRow } from '@/lib/types';
 
 type When = 'now' | 'tonight' | 'weekend';
@@ -25,7 +26,7 @@ function endOfNight(now: number) {
 
 export function Discover() {
   const params = useSearchParams();
-  const { events, stats, now, dist, status, userLoc, posts, openCreate, locate, city, setSheet, theme, setThemeMode } = useLive();
+  const { events, stats, now, dist, status, userLoc, posts, openCreate, locate, city, theme, setThemeMode } = useLive();
   const [when, setWhen] = useState<When>('now');
   const [cat, setCat] = useState('For You');
   const [q, setQ] = useState('');
@@ -68,7 +69,7 @@ export function Discover() {
             <h1 className="where">Where’s the <Wordmark text="vibe" />?</h1>
             <div className="live-line">
               <span className="livedot" />
-              <button className="citybtn" onClick={() => setSheet({ kind: 'city' })} aria-label={`City: ${city.name}. Change city`}>
+              <button className="citybtn" onClick={openCityIntro} aria-label={`City: ${city.name}. Change city`}>
                 Live in {city.name}
                 <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" /></svg>
               </button>

@@ -7,3 +7,11 @@ export const INTRO_KEY = 'vibes.intro';
  * Shared links to an event or the map skip it.
  */
 export const INTRO_BOOT = `(function(){try{if(location.pathname==='/'&&!sessionStorage.getItem('${INTRO_KEY}'))document.documentElement.setAttribute('data-intro','1');}catch(e){}})();`;
+
+/** Event that reopens the city carousel from anywhere in the app. */
+export const INTRO_OPEN = 'vibes:intro';
+
+export function openCityIntro() {
+  document.documentElement.setAttribute('data-intro', '1');
+  window.dispatchEvent(new Event(INTRO_OPEN));
+}

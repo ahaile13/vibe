@@ -5,7 +5,7 @@ import { CITY_LIST } from '@/lib/city';
 import { useLive } from './LiveProvider';
 import { Skyline } from './Skyline';
 import { Icon } from './Icon';
-import { INTRO_KEY } from '@/lib/intro';
+import { INTRO_KEY, INTRO_OPEN } from '@/lib/intro';
 
 const ALPHA = [...CITY_LIST].sort((a, b) => a.name.localeCompare(b.name));
 const indexOf = (id: string) => Math.max(0, ALPHA.findIndex((c) => c.id === id));
@@ -13,7 +13,7 @@ const indexOf = (id: string) => Math.max(0, ALPHA.findIndex((c) => c.id === id))
 /**
  * Opening screen: the v mark, the centered city's skyline, and an A to Z
  * carousel of cities. The skyline crossfades as the carousel scrolls; tapping
- * the centered city enters the app there.
+ * the centered city enters the app there. The city button in the app reopens it.
  */
 export function CityIntro() {
   const { city, chooseCity, theme, setThemeMode } = useLive();
@@ -60,12 +60,28 @@ export function CityIntro() {
     if (!frame.current) frame.current = requestAnimationFrame(paint);
   }, [paint]);
 
-  // Hidden unless the boot script asked for it (fresh session on the home page).
+  const cityRef = useRef(city.id);
+  cityRef.current = city.id;
+
+  // Hidden unless the boot script asked for it (fresh session on the home page);
+  // the city button in the app reopens it on the current city.
   useEffect(() => {
-    if (!document.documentElement.hasAttribute('data-intro')) {
-      setOpen(false);
-      return;
-    }
+    if (!document.documentElement.hasAttribute('data-intro')) setOpen(false);
+    const reopen = () => {
+      const i = indexOf(cityRef.current);
+      touched.current = false;
+      idxRef.current = i;
+      setIdx(i);
+      setLayers([{ id: ALPHA[i].id, k: ++layerKey.current }]);
+      setLeaving(false);
+      setOpen(true);
+    };
+    window.addEventListener(INTRO_OPEN, reopen);
+    return () => window.removeEventListener(INTRO_OPEN, reopen);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
     scrollToIndex(idxRef.current, false);
     paint();
     const t = track.current;
@@ -83,7 +99,7 @@ export function CityIntro() {
       t?.removeEventListener('wheel', wheel);
       window.removeEventListener('resize', resize);
     };
-  }, [paint, scrollToIndex]);
+  }, [open, paint, scrollToIndex]);
 
   // Saved or nearest city arrives after mount: start there unless they already scrolled.
   useEffect(() => {
