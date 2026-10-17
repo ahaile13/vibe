@@ -1,5 +1,6 @@
 'use client';
 
+import { Dotted } from './Logo';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -177,7 +178,7 @@ export function MapView() {
     <>
       <SetupNotice />
       <div className="top" style={{ marginBottom: 12 }}>
-        <h1 className="ttl" style={{ margin: 0 }}>Live map</h1>
+        <h1 className="ttl" style={{ margin: 0 }}><Dotted text={'Live map'} /></h1>
         <div className="seg glass">
           <Link href="/" aria-pressed="false">Feed</Link>
           <button aria-pressed="true">Map</button>
@@ -185,7 +186,7 @@ export function MapView() {
       </div>
       <div className="mapwrap">
         <div ref={box} className="mapc" role="region" aria-label="Map of live events" />
-        {failed && <div className="empty" style={{ position: 'absolute', inset: 40 }}><h3>Map didn’t load.</h3><p>Check your connection and refresh.</p></div>}
+        {failed && <div className="empty" style={{ position: 'absolute', inset: 40 }}><h3><Dotted text={'Map didn’t load.'} /></h3><p>Check your connection and refresh.</p></div>}
         <div className="mapfloat">
           {FILTERS.map(([k, l]) => (
             <button

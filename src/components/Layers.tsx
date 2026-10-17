@@ -1,5 +1,6 @@
 'use client';
 
+import { Dotted } from './Logo';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLive } from './LiveProvider';
@@ -70,7 +71,7 @@ function GateModal() {
     return (
       <div className="modal glass" role="alertdialog" aria-live="assertive" aria-label="Checking your location">
         <div className="spin" />
-        <h2>Checking you’re there</h2>
+        <h2><Dotted text={'Checking you’re there'} /></h2>
         <p>Getting a fresh location fix.</p>
       </div>
     );
@@ -80,7 +81,7 @@ function GateModal() {
     <>
       <div className="scrim" style={{ zIndex: 75 }} onClick={() => setModal(null)} />
       <div className="modal glass" role="alertdialog" aria-labelledby="gate-h">
-        <h2 id="gate-h">{g.title}</h2>
+        <h2 id="gate-h"><Dotted text={g.title} /></h2>
         <p>{g.body(modal.detail)}</p>
         <div className="stack">
           {modal.code === 'OUTSIDE' && ev.lat != null && ev.lng != null && (
@@ -145,7 +146,7 @@ function RateSheet({ event, token }: { event: EventRow; token: string }) {
   return (
     <div className="sheet glass" role="dialog" aria-modal="true" aria-labelledby="rate-h">
       <div className="grab" />
-      <h2 id="rate-h">What’s the vibe?</h2>
+      <h2 id="rate-h"><Dotted text={'What’s the vibe?'} /></h2>
       <p className="sub">{event.name}. You’re checked in.</p>
       <div className="vibes" role="group" aria-label="Vibe">
         {VIBES.map(([k, e, l, d, c]) => (
@@ -265,7 +266,7 @@ function CaptureSheet({ eventId }: { eventId?: string }) {
     return (
       <div className="sheet glass" role="dialog" aria-modal="true" aria-labelledby="cap-h">
         <div className="grab" />
-        <h2 id="cap-h">Capture the vibe</h2>
+        <h2 id="cap-h"><Dotted text={'Capture the vibe'} /></h2>
         <p className="sub">Posts go live only while you’re at the spot.</p>
         {reading ? (
           <div style={{ padding: '30px 0', textAlign: 'center' }}><div className="spin" /></div>
@@ -443,7 +444,7 @@ function ReportSheet({ target, id, userId, username }: { target: 'comment' | 'po
   return (
     <div className="sheet glass" role="dialog" aria-modal="true" aria-labelledby="rp-h">
       <div className="grab" />
-      <h2 id="rp-h">Report this {target}</h2>
+      <h2 id="rp-h"><Dotted text={`Report this ${target}`} /></h2>
       <p className="sub">What’s wrong with it?</p>
       <div className="opts">
         {REASONS.map(([k, l]) => (

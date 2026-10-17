@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     if (href.includes('?') || href.includes('#')) return false;
     return base === '/' ? path === '/' : path.startsWith(base);
   };
-  const isAuth = path.startsWith('/login');
+  const isAuth = path.startsWith('/login') || path.startsWith('/reset-password');
   return (
     <>
       <div className="backdrop" aria-hidden="true">

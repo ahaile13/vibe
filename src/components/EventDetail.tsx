@@ -1,5 +1,6 @@
 'use client';
 
+import { Dotted } from './Logo';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -40,7 +41,7 @@ export function EventDetail({ id }: { id: string }) {
     if (missing || status === 'unconfigured')
       return (
         <div className="empty" style={{ marginTop: 40 }}>
-          <h3>This event isn’t available.</h3>
+          <h3><Dotted text={'This event isn’t available.'} /></h3>
           <p>It may have been removed, or the link is wrong.</p>
           <Link className="btn pri" href="/">Back to Discover</Link>
         </div>
@@ -97,7 +98,7 @@ export function EventDetail({ id }: { id: string }) {
 
         {s.n > 0 && (
           <section className="panel">
-            <h2>{ended ? 'How it went' : 'The vibe right now'}</h2>
+            <h2><Dotted text={ended ? 'How it went' : 'The vibe right now'} /></h2>
             <div className="bars">
               {([['Popping', 'var(--pop)', s.pp], ['Mid', 'var(--mid)', s.pm], ['Dead', 'var(--dead)', s.pd]] as const).map(([l, c, v]) => (
                 <div className="bar" key={l}>
@@ -107,7 +108,7 @@ export function EventDetail({ id }: { id: string }) {
                 </div>
               ))}
             </div>
-            <h2 style={{ marginTop: 22 }}>Worth it?</h2>
+            <h2 style={{ marginTop: 22 }}><Dotted text={'Worth it?'} /></h2>
             <div className="worth">
               <span className="big" style={{ color: s.py >= 0.5 ? 'var(--yes)' : 'var(--no)' }}>{Math.round(s.py * 100)}%</span>
               <span style={{ color: 'var(--muted)' }}>say yes</span>
@@ -146,7 +147,7 @@ export function EventDetail({ id }: { id: string }) {
         <Comments ev={ev} />
 
         <section className="panel">
-          <h2>Details</h2>
+          <h2><Dotted text={'Details'} /></h2>
           <dl className="info">
             {ev.address && (<><dt>Address</dt><dd>{ev.address}</dd></>)}
             <dt>When</dt>
@@ -163,7 +164,7 @@ export function EventDetail({ id }: { id: string }) {
 
         {(isOwner || isAdmin) && (
           <section className="panel owner">
-            <h2>{isOwner ? 'Your event' : 'Admin'}</h2>
+            <h2><Dotted text={isOwner ? 'Your event' : 'Admin'} /></h2>
             {!confirmDel ? (
               <button className="btn gl danger" onClick={() => setConfirmDel(true)}><Icon name="trash" />Delete event</button>
             ) : (
@@ -285,7 +286,7 @@ function Comments({ ev }: { ev: EventRow }) {
   };
   return (
     <section className="panel">
-      <h2>What people are saying</h2>
+      <h2><Dotted text={'What people are saying'} /></h2>
       {!all.length ? (
         <p style={{ color: 'var(--muted)', margin: 0 }}>
           {isActive(ev, now) ? 'No comments yet. If you’re here, say what it’s like in one sentence when you rate.' : 'No comments.'}

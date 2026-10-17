@@ -1,5 +1,6 @@
 'use client';
 
+import { Dotted } from './Logo';
 import { useLive } from './LiveProvider';
 import { EventCard } from './EventCard';
 import { SetupNotice } from './AppShell';
@@ -29,17 +30,17 @@ export function Trending() {
   return (
     <>
       <SetupNotice />
-      <h1 className="ttl">Trending</h1>
+      <h1 className="ttl"><Dotted text={'Trending'} /></h1>
       <p style={{ color: 'var(--muted)', margin: '0 0 6px' }}>Ranked by what’s happening in the last hour, not all-time popularity.</p>
       {status === 'ready' && !shown.length && (
         <div className="empty" style={{ marginTop: 20 }}>
-          <h3>Nothing’s trending yet.</h3>
+          <h3><Dotted text={'Nothing’s trending yet.'} /></h3>
           <p>Trends show up once people start rating spots tonight.</p>
         </div>
       )}
       {shown.map(([t, d, l]) => (
         <section className="sec" key={t}>
-          <h2>{t}</h2>
+          <h2><Dotted text={t} /></h2>
           <p>{d}</p>
           <div className="hrow">
             {l.map((e) => <EventCard key={e.id} e={e} variant="mini" />)}

@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getSupabase } from '@/lib/supabase/client';
 import { SetupNotice } from './AppShell';
-import { Logo } from './Logo';
+import { Logo, Dotted } from './Logo';
 
 type Mode = 'signin' | 'signup';
 
@@ -34,6 +34,21 @@ export function Login() {
   );
 
   const callback = () => `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
+
+  async function forgot() {
+    const sb = getSupabase();
+    if (!sb) return;
+    if (!email.trim()) return setErr('Type your email above, then tap Forgot password.');
+    setErr(null);
+    setInfo(null);
+    setBusy(true);
+    const { error } = await sb.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent('/reset-password')}`,
+    });
+    setBusy(false);
+    if (error) return setErr(friendly(error.message));
+    setInfo(`Password reset link sent to ${email.trim()}. Open it on this device to choose a new password.`);
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -86,7 +101,7 @@ export function Login() {
     <div className="auth">
       <SetupNotice />
       <Logo size={52} />
-      <h1>Know the vibe.</h1>
+      <h1><Dotted text={'Know the vibe.'} /></h1>
       <p>Browse freely. Sign in to rate, comment and post from where you are.</p>
 
       <div className="seg glass" role="group" aria-label="Sign in or create account" style={{ marginBottom: 14 }}>
@@ -109,6 +124,11 @@ export function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {mode === 'signin' && (
+          <button type="button" className="linkb" style={{ display: 'block', margin: '-2px 0 12px auto' }} onClick={forgot} disabled={busy}>
+            Forgot password?
+          </button>
+        )}
         <button className="btn hot wide" disabled={busy}>
           {busy ? <span className="spin sm" /> : mode === 'signin' ? 'Sign in' : 'Create account'}
         </button>

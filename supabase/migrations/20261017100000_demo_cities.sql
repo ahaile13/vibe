@@ -1,5 +1,5 @@
 -- Test data for all 20 cities: launch spots in each city (in that city's time zone),
--- nightly events for them, and sample ratings from demo rater accounts so scores show.
+-- nightly events for them, and sample ratings (tied to no account) so scores show.
 -- Everything here is marked demo and can be removed (see the bottom of this file).
 -- Safe to run more than once.
 
@@ -144,35 +144,24 @@ select * from (values
 ) as v(name, category, area, address, lat, lng, radius_m, open_time, hours, cover_charge, age_rule, tz, is_demo)
 where not exists (select 1 from public.venues x where x.is_demo and x.name = v.name);
 
--- ---------------------------------------------------------------- demo raters
--- 60 accounts that cannot sign in (no password, unroutable .invalid email). Ratings stay anonymous
--- in the app, so these names never show.
-insert into auth.users (instance_id, id, aud, role, email, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
-select '00000000-0000-0000-0000-000000000000', gen_random_uuid(), 'authenticated', 'authenticated',
-       format('demo.rater%s@vibes.invalid', lpad(g::text, 2, '0')),
-       '{"provider":"email","providers":["email"]}'::jsonb, '{"demo":true}'::jsonb, now(), now()
-from generate_series(1, 60) g
-where not exists (select 1 from auth.users u where u.email = format('demo.rater%s@vibes.invalid', lpad(g::text, 2, '0')));
-
-insert into public.profiles (id, username)
-select u.id, 'demo_rater_' || substring(u.email from 'demo\.rater(\d+)@')
-from auth.users u where u.email like 'demo.rater%@vibes.invalid'
-on conflict (id) do update set username = excluded.username;
-
 -- ---------------------------------------------------------------- sample ratings
+-- Sample ratings belong to no account (user_id is null), so the only accounts in the database are
+-- real people. Row security already hides them from everyone; only the anonymous score feed reads them.
+alter table public.ratings alter column user_id drop not null;
+delete from auth.users where email like 'demo.rater%@vibes.invalid';  -- older test setup used bot accounts
+
 -- Every live demo event gets a personality for the night (popping, mid or dead) that drifts as the
 -- night goes on, so scores, worth-it and heating-up/cooling-down all move. Each run tops up events
--- that are short on recent ratings (backdated across the last hour) and adds a few fresh ones.
+-- that are short on recent ratings (backdated across the last hour), adds a few fresh ones, and
+-- clears sample ratings older than four hours.
 create or replace function public.seed_demo_ratings()
 returns int language plpgsql security definer set search_path = public as $$
 declare
-  e record; raters uuid[]; n int; made int := 0;
+  e record; made int := 0;
   h int; base float8; p float8; prog float8; drift float8;
-  tgt int; recent int; k int; i int; start_at int; span float8; t timestamptz; x float8; lvl vibe_level;
+  tgt int; recent int; k int; i int; span float8; t timestamptz; x float8; lvl vibe_level;
 begin
-  select array_agg(p2.id order by p2.username) into raters from profiles p2 where p2.username like 'demo\_rater\_%';
-  n := coalesce(array_length(raters, 1), 0);
-  if n = 0 then return 0; end if;
+  delete from ratings where user_id is null and updated_at < now() - interval '4 hours';
 
   for e in select id, starts_at, ends_at from events where is_demo and now() >= starts_at and now() < ends_at loop
     h := abs(('x' || substr(md5(e.id::text), 1, 8))::bit(32)::int);
@@ -188,16 +177,13 @@ begin
     select count(*) into recent from ratings where event_id = e.id and updated_at > now() - interval '60 minutes';
     k := case when recent < tgt then tgt - recent else 1 + floor(random() * 3)::int end;
     span := least(55, greatest(1, extract(epoch from now() - e.starts_at) / 60));
-    start_at := floor(random() * n)::int;
 
-    for i in 1 .. least(k, n) loop
+    for i in 1 .. k loop
       t := case when recent < tgt then now() - make_interval(secs => (random() * span * 60)::int) else now() end;
       x := random();
       lvl := case when x < p then 'popping' when x < p + (1 - p) * 0.6 then 'mid' else 'dead' end;
       insert into ratings (user_id, event_id, vibe, worth, verified_at, created_at, updated_at)
-      values (raters[1 + (start_at + i) % n], e.id, lvl, random() < 0.25 + 0.7 * p, t, t, t)
-      on conflict (user_id, event_id) do update
-        set vibe = excluded.vibe, worth = excluded.worth, verified_at = excluded.verified_at, updated_at = excluded.updated_at;
+      values (null, e.id, lvl, random() < 0.25 + 0.7 * p, t, t, t);
       made := made + 1;
     end loop;
   end loop;
@@ -223,6 +209,5 @@ end $$;
 
 -- ---------------------------------------------------------------- to remove all test data later
 -- select cron.unschedule('vibes-demo-ratings');
--- delete from public.ratings where user_id in (select id from public.profiles where username like 'demo\_rater\_%');
--- delete from auth.users where email like 'demo.rater%@vibes.invalid';
+-- delete from public.ratings where user_id is null;
 -- To drop the launch spots too: delete from public.events where is_demo; delete from public.venues where is_demo;

@@ -1,5 +1,6 @@
 'use client';
 
+import { Dotted } from './Logo';
 import { openCityIntro } from '@/lib/intro';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -23,6 +24,15 @@ export function ProfileView() {
   const [extra, setExtra] = useState<EventRow[]>([]);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
+
+  // Back from setting a new password.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('pw') === '1') {
+      toast('Password updated');
+      window.history.replaceState(null, '', '/profile');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const known = new Map(events.map((e) => [e.id, e] as const));
   for (const e of extra) if (!known.has(e.id)) known.set(e.id, e);
@@ -55,7 +65,7 @@ export function ProfileView() {
   if (!user)
     return (
       <div className="empty" style={{ marginTop: 30 }}>
-        <h3>Your vibe, saved.</h3>
+        <h3><Dotted text={'Your vibe, saved.'} /></h3>
         <p>Sign in to rate spots, post clips, and keep a list of places to hit.</p>
         <Link className="btn hot" href="/login?next=/profile">Sign in</Link>
       </div>
@@ -118,7 +128,7 @@ export function ProfileView() {
           {savedEvents.length ? savedEvents.map((e) => row(e, `${e.area ?? e.category}, ${STATUS[stats[e.id]?.status ?? 'ended'].l.toLowerCase()}`)) : <p style={{ color: 'var(--muted)', margin: 0 }}>Tap the bookmark on any event to keep it here.</p>}
         </section>
         <section className="panel">
-          <h2>Your ratings <small>Private</small></h2>
+          <h2><Dotted text="Your ratings" /> <small>Private</small></h2>
           {ratedIds.length ? (
             ratedIds.slice(0, 30).map(([id, r]) => {
               const e = known.get(id);
@@ -138,7 +148,7 @@ export function ProfileView() {
           <p className="foot-note">Auto uses the day theme from 6:30 AM to 6:30 PM and night after dark.</p>
         </section>
         <section className="panel">
-          <h2>Location</h2>
+          <h2><Dotted text={'Location'} /></h2>
           <p style={{ margin: '0 0 12px', fontSize: 14 }}>{userLoc ? 'Distances use your location.' : `Distances are measured from downtown ${city.name}.`}</p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button className="btn gl" onClick={() => locate(false)}><Icon name="locate" />Use my location</button>
@@ -148,7 +158,7 @@ export function ProfileView() {
           <p className="foot-note">Location is checked once each time you rate or post, never tracked in the background, and never shown to anyone.</p>
         </section>
         <section className="panel">
-          <h2>How ranking works</h2>
+          <h2><Dotted text={'How ranking works'} /></h2>
           <table className="w">
             <tbody>
               <tr><td>Verified ratings, last hour</td><td>{SCORING.weights.recent * 100}%</td></tr>
@@ -162,7 +172,10 @@ export function ProfileView() {
           <p className="foot-note">Ratings fade over about an hour. Scores lean toward neutral until enough people rate, so two 🔥 votes can’t beat two hundred. One active rating per person per event.</p>
         </section>
       </div>
-      <button className="btn gl" style={{ marginTop: 18 }} onClick={signOut}><Icon name="out" />Sign out</button>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
+        <Link className="btn gl" href="/reset-password">Change password</Link>
+        <button className="btn gl" onClick={signOut}><Icon name="out" />Sign out</button>
+      </div>
     </>
   );
 }

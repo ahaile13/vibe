@@ -99,6 +99,8 @@ a { color: inherit; text-decoration: none; }
 .where .wm { line-height: inherit; }
 .where .wm-i b { top: 0.1em; }
 .wm-i { position: relative; display: inline-block; }
+/* titles: the i dot sits a touch lower in heavier heading type */
+.dotted .wm-i b { top: 0.06em; width: max(0.17em, 4px); height: max(0.17em, 4px); margin-left: min(-0.085em, -2px); }
 .wm-i b { position: absolute; left: 50%; top: -0.02em; width: 0.17em; height: 0.17em; margin-left: -0.085em; border-radius: 50%; background: var(--accent); animation: breathe 3.2s ease-in-out infinite; }
 @keyframes breathe { 50% { opacity: 0.55; } }
 .side a:not(.logo) { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; color: var(--muted); font-weight: 600; transition: color 0.2s, background 0.2s; }
