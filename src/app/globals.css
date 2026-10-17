@@ -516,3 +516,35 @@ html[data-intro] .intro { position: fixed; inset: 0; z-index: 90; display: flex;
   .intro-mid { top: 25%; }
 }
 @media (prefers-reduced-motion: reduce) { .intro-layer, .intro-layer.out, .intro.leaving, .intro-mark { animation-duration: 0.01s; } }
+
+/* ---------------------------------------------------------------- day legibility
+   Daylight washes out black type over the skyline. Text that sits straight on the backdrop
+   gets a dark hairline shadow plus a soft daylight halo; chips and small labels sit on frosted
+   pills; a morning mist settles over the upper skyline where the headline lives. */
+:root[data-theme='day'] body { font-weight: 600; }
+:root[data-theme='day'] { --ink-shadow: 0 1px 1px rgba(0, 0, 0, 0.28), 0 0 2px rgba(255, 255, 255, 0.9), 0 0 18px rgba(255, 255, 255, 0.95); }
+:root[data-theme='day'] .hero,
+:root[data-theme='day'] .ttl,
+:root[data-theme='day'] .sec,
+:root[data-theme='day'] .empty,
+:root[data-theme='day'] .intro-mark,
+:root[data-theme='day'] .intro-city .nm { text-shadow: var(--ink-shadow); }
+:root[data-theme='day'] .glass,
+:root[data-theme='day'] .panel,
+:root[data-theme='day'] .btn,
+:root[data-theme='day'] .chip,
+:root[data-theme='day'] .card,
+:root[data-theme='day'] .cb,
+:root[data-theme='day'] .art,
+:root[data-theme='day'] .themebtn { text-shadow: none; }
+:root[data-theme='day'] .chip { color: #000; background: rgba(255, 255, 255, 0.74); border-color: rgba(0, 0, 0, 0.12);
+  -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%); box-shadow: 0 2px 10px rgba(30, 50, 60, 0.08); }
+:root[data-theme='day'] .story > span { justify-self: center; max-width: 100%; padding: 2px 9px; border-radius: 999px; color: #000;
+  background: rgba(255, 255, 255, 0.78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+:root[data-theme='day'] .subbar h3 { display: inline-block; padding: 6px 13px; border-radius: 999px; color: #000; font-weight: 600;
+  background: rgba(255, 255, 255, 0.78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+:root[data-theme='day'] .themebtn { background: rgba(255, 255, 255, 0.7); border-color: rgba(0, 0, 0, 0.14); color: #000; }
+/* morning mist over the top of the skyline, so the headline reads against soft light */
+:root[data-theme='day'] .backdrop::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(247, 245, 240, 0.92) 0%, rgba(247, 245, 240, 0.55) 34%, rgba(247, 245, 240, 0) 62%); }
+:root[data-theme='day'] .backdrop .skyline { opacity: 0.88; }
