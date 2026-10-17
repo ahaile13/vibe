@@ -185,7 +185,7 @@ main.page { min-height: 100dvh; padding: 20px 20px 132px; max-width: 1220px; mar
 /* day: selected states in soft grey, not near-black */
 :root[data-theme='day'] .seg [aria-pressed='true'],
 :root[data-theme='day'] .chip[aria-pressed='true'],
-:root[data-theme='day'] .mapfloat .chip[aria-pressed='true'] { background: #8f9a9d; color: #000000; border-color: #7f8a8d; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+:root[data-theme='day'] .mapfloat .chip[aria-pressed='true'] { background: #5f6a6e; color: #ffffff; border-color: #535d61; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18); }
 @media (min-width: 900px) { .chips { margin: 0; padding-inline: 0; } }
 
 .stories { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; margin: 22px -20px 4px; padding: 2px 20px 8px; }
