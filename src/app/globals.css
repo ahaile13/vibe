@@ -42,12 +42,12 @@
   --bg: #eef0ee; --bg2: #ffffff; --bg3: #e4e8e6;
   --glass: rgba(255, 255, 255, 0.62); --glass-hi: rgba(255, 255, 255, 0.8);
   --line: rgba(20, 32, 36, 0.09); --line2: rgba(20, 32, 36, 0.16);
-  --text: #141a1c; --muted: #56626a; --dim: #85908f;
+  --text: #000000; --muted: #000000; --dim: #000000; /* day: all text black */
   --accent: #e2c48f; --accent-ink: #1b1610;
   --pop: #d9692f; --mid: #b48a22; --dead: #67768a; --soon: #3f7fa8; --yes: #3d9468; --no: #c8564c; --quiet: #9aa3a6;
   --tint-1: rgba(20, 32, 36, 0.035); --tint-2: rgba(20, 32, 36, 0.06); --tint-3: rgba(20, 32, 36, 0.1); --tint-4: rgba(20, 32, 36, 0.18);
   --sheet: rgba(250, 251, 250, 0.9); --scrim: rgba(30, 40, 44, 0.35); --shadow: rgba(30, 50, 60, 0.14);
-  --pulse-text: rgba(20, 26, 28, 0.82); --pulse-shadow: rgba(238, 240, 238, 0.95);
+  --pulse-text: #000000; --pulse-shadow: rgba(238, 240, 238, 0.95);
   --sky-top: #cfdfe8; --sky-haze: #f2e6d4; --sky-back: #c3d0d6; --sky-mid: #93a6b0; --sky-face: #adbcc4;
   --sky-front: #7f909a; --sky-line: #b7c6cd; --sky-gap: #cfdfe8; --sky-win: #ffffff; --sky-mist: #ffffff;
   --sky-mtn: #a9bac3; --sky-snow: #ffffff; --sky-gg: #c05a3c; --sky-bridge: #5c84a4;
@@ -185,7 +185,7 @@ main.page { min-height: 100dvh; padding: 20px 20px 132px; max-width: 1220px; mar
 /* day: selected states in soft grey, not near-black */
 :root[data-theme='day'] .seg [aria-pressed='true'],
 :root[data-theme='day'] .chip[aria-pressed='true'],
-:root[data-theme='day'] .mapfloat .chip[aria-pressed='true'] { background: #b3bcbe; color: #000000; border-color: #a3adb0; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45); }
+:root[data-theme='day'] .mapfloat .chip[aria-pressed='true'] { background: #8f9a9d; color: #000000; border-color: #7f8a8d; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3); }
 @media (min-width: 900px) { .chips { margin: 0; padding-inline: 0; } }
 
 .stories { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; margin: 22px -20px 4px; padding: 2px 20px 8px; }
@@ -399,7 +399,7 @@ select.in option { background: var(--bg2); }
 .mapfloat::-webkit-scrollbar { display: none; }
 .mapfloat .chip { color: #c3cbcb; background: rgba(12, 16, 18, 0.62); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-color: rgba(255, 255, 255, 0.1); }
 .mapfloat .chip[aria-pressed='true'] { background: var(--text); color: var(--bg); }
-:root[data-theme='day'] .mapfloat .chip { color: #3a4448; background: rgba(255, 255, 255, 0.78); border-color: rgba(20, 32, 36, 0.1); }
+:root[data-theme='day'] .mapfloat .chip { color: #000000; background: rgba(255, 255, 255, 0.78); border-color: rgba(20, 32, 36, 0.1); }
 .pin { position: relative; width: var(--s); height: var(--s); border-radius: 50%; background: var(--c); border: 2.5px solid #0b0f11; display: grid; place-items: center; font: 700 calc(var(--s) * 0.38) var(--font-body), sans-serif; color: #0b0f11; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); }
 .pin::before { content: ''; position: absolute; inset: calc(var(--s) * -0.45); border-radius: 50%; background: var(--c); opacity: 0.16; z-index: -1; }
 .pin.sel { border-color: var(--text); }
