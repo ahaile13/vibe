@@ -165,7 +165,7 @@ export function CityIntro() {
         ))}
       </div>
 
-      <div className="intro-mark" aria-hidden="true">v<b /></div>
+      <div className="intro-mark" aria-hidden="true">v<b /><sup className="mark-c">© AMH</sup></div>
 
       <button
         className="intro-theme"

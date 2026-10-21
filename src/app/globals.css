@@ -519,4 +519,5 @@ html[data-intro] .intro { position: fixed; inset: 0; z-index: 90; display: flex;
   .intro-sky::after { height: 37px; }
   .intro-mid { top: 25%; }
 }
+.intro-mark .mark-c { position: absolute; left: calc(100% + 4px); top: 2px; font: 700 12px/1 var(--font-body); letter-spacing: 0.02em; white-space: nowrap; opacity: 0.85; text-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .intro-layer, .intro-layer.out, .intro.leaving, .intro-mark { animation-duration: 0.01s; } }
