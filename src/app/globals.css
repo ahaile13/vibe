@@ -100,7 +100,7 @@ a { color: inherit; text-decoration: none; }
 .where .wm-i b { top: 0.1em; }
 .wm-i { position: relative; display: inline-block; }
 /* tiny copyright mark tucked against the logo */
-.amh { font-family: var(--font-script), 'UnifrakturMaguntia', serif; font-weight: 400; font-size: 1.2em; letter-spacing: 0.02em; }
+.wm-c, .mark-c, .amh { font-family: Arial, Helvetica, sans-serif !important; }
 .wm-c { align-self: flex-start; font-size: max(0.14em, 6.5px); font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; line-height: 1; margin: 0.1em 0 0 0.08em; opacity: 0.85; }
 /* titles: the i dot sits a touch lower in heavier heading type */
 .dotted .wm-i b { top: 0.06em; width: max(0.17em, 4px); height: max(0.17em, 4px); margin-left: min(-0.085em, -2px); }
