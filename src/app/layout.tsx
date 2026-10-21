@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Bebas_Neue, Great_Vibes, Quicksand } from 'next/font/google';
+import { Bebas_Neue, Quicksand, UnifrakturMaguntia } from 'next/font/google';
 import './globals.css';
 import { LiveProvider } from '@/components/LiveProvider';
 import { AppShell } from '@/components/AppShell';
@@ -10,8 +10,8 @@ import { INTRO_BOOT } from '@/lib/intro';
 const quicksand = Quicksand({ subsets: ['latin'], variable: '--font-q' });
 // Condensed display face for event flyers.
 const poster = Bebas_Neue({ subsets: ['latin'], weight: '400', variable: '--font-poster' });
-// Script face for the © AMH signature next to the logo.
-const script = Great_Vibes({ subsets: ['latin'], weight: '400', variable: '--font-script' });
+// Old English (blackletter) face for the © AMH mark next to the logo.
+const script = UnifrakturMaguntia({ subsets: ['latin'], weight: '400', variable: '--font-script' });
 
 export const metadata: Metadata = {
   // Vercel provides VERCEL_PROJECT_PRODUCTION_URL automatically; no setup needed.
