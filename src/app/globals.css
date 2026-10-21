@@ -100,7 +100,8 @@ a { color: inherit; text-decoration: none; }
 .where .wm-i b { top: 0.1em; }
 .wm-i { position: relative; display: inline-block; }
 /* tiny copyright mark tucked against the logo */
-.wm-c { align-self: flex-start; font-size: max(0.27em, 10px); font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; line-height: 1; margin: 0.1em 0 0 0.08em; opacity: 0.85; }
+.amh { font-family: var(--font-script), 'Great Vibes', cursive; font-weight: 400; font-size: 1.45em; letter-spacing: 0.01em; }
+.wm-c { align-self: flex-start; font-size: max(0.22em, 9px); font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; line-height: 1; margin: 0.1em 0 0 0.08em; opacity: 0.85; }
 /* titles: the i dot sits a touch lower in heavier heading type */
 .dotted .wm-i b { top: 0.06em; width: max(0.17em, 4px); height: max(0.17em, 4px); margin-left: min(-0.085em, -2px); }
 .wm-i b { position: absolute; left: 50%; top: -0.02em; width: 0.17em; height: 0.17em; margin-left: -0.085em; border-radius: 50%; background: var(--accent); animation: breathe 3.2s ease-in-out infinite; }
@@ -519,5 +520,5 @@ html[data-intro] .intro { position: fixed; inset: 0; z-index: 90; display: flex;
   .intro-sky::after { height: 37px; }
   .intro-mid { top: 25%; }
 }
-.intro-mark .mark-c { position: absolute; left: calc(100% + 4px); top: 2px; font: 700 12px/1 var(--font-body); letter-spacing: 0.02em; white-space: nowrap; opacity: 0.85; text-shadow: none; }
+.intro-mark .mark-c { position: absolute; left: calc(100% + 4px); top: 2px; font: 700 10px/1 var(--font-body); letter-spacing: 0.02em; white-space: nowrap; opacity: 0.85; text-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .intro-layer, .intro-layer.out, .intro.leaving, .intro-mark { animation-duration: 0.01s; } }
