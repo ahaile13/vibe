@@ -17,7 +17,7 @@ export function Wordmark({ size, text = 'vibes' }: { size?: number; text?: strin
             {text.slice(i + 1)}
           </>
         )}
-        {text === 'vibes' && <sup className="wm-c">©</sup>}
+        {text === 'vibes' && <sup className="wm-c">© AMH</sup>}
       </span>
       <span className="sr">{text}</span>
     </>
