@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Bebas_Neue, Quicksand } from 'next/font/google';
+import { Bebas_Neue, Fraunces, Quicksand } from 'next/font/google';
 import './globals.css';
 import { LiveProvider } from '@/components/LiveProvider';
 import { AppShell } from '@/components/AppShell';
@@ -10,6 +10,8 @@ import { INTRO_BOOT } from '@/lib/intro';
 const quicksand = Quicksand({ subsets: ['latin'], variable: '--font-q' });
 // Condensed display face for event flyers.
 const poster = Bebas_Neue({ subsets: ['latin'], weight: '400', variable: '--font-poster' });
+// Variable serif for flyers (soft retro, elegant brunch, spring festival). Axes only, no fixed weight.
+const serif = Fraunces({ subsets: ['latin'], variable: '--font-serif', axes: ['SOFT', 'WONK', 'opsz'] });
 
 export const metadata: Metadata = {
   // Vercel provides VERCEL_PROJECT_PRODUCTION_URL automatically; no setup needed.
@@ -32,7 +34,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${quicksand.variable} ${poster.variable}`} data-theme="night" suppressHydrationWarning>
+    <html lang="en" className={`${quicksand.variable} ${poster.variable} ${serif.variable}`} data-theme="night" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT + INTRO_BOOT }} />
       </head>
