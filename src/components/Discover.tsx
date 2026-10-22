@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLive } from './LiveProvider';
-import { EventCard } from './EventCard';
+import { Deck } from './Deck';
 import { Cover } from './Media';
 import { Icon } from './Icon';
 import { STATUS, StatusPill, WorthText, liveText, metaText } from './bits';
@@ -30,7 +30,7 @@ export function Discover() {
   const [when, setWhen] = useState<When>('now');
   const [cat, setCat] = useState('For You');
   const [q, setQ] = useState('');
-  const [mode, setMode] = useState<'grid' | 'reel'>('grid');
+  const [mode, setMode] = useState<'grid' | 'reel'>('grid'); // grid = the card deck
 
   useEffect(() => {
     if (params.get('near') === '1') {
@@ -145,7 +145,7 @@ export function Discover() {
       <div className="subbar">
         <h3>{list.length} {when === 'now' ? 'live now' : when === 'tonight' ? 'tonight' : 'this week'}</h3>
         <div className="vt glass" role="group" aria-label="Layout">
-          <button aria-pressed={mode === 'grid'} aria-label="Grid" onClick={() => setMode('grid')}><Icon name="grid" /></button>
+          <button aria-pressed={mode === 'grid'} aria-label="Card deck" onClick={() => setMode('grid')}><Icon name="grid" /></button>
           <button aria-pressed={mode === 'reel'} aria-label="Full screen" onClick={() => setMode('reel')}><Icon name="reel" /></button>
         </div>
       </div>
@@ -166,9 +166,7 @@ export function Discover() {
           {list.map((e) => <ReelItem key={e.id} e={e} />)}
         </div>
       ) : (
-        <div className="grid">
-          {list.map((e, i) => <EventCard key={e.id} e={e} variant={i === 0 && list.length > 2 ? 'feat' : undefined} />)}
-        </div>
+        <Deck list={list} />
       )}
     </>
   );

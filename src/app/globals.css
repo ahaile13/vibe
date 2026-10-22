@@ -537,3 +537,22 @@ html[data-intro] .intro { position: fixed; inset: 0; z-index: 90; display: flex;
 @keyframes bubin { from { transform: scale(0.4); opacity: 0; } }
 @keyframes bubfloat { 50% { translate: 0 -4px; } }
 @media (prefers-reduced-motion: reduce) { .bub { animation: none; } }
+
+/* ---------------------------------------------------------------- event deck (Discover) */
+.deckwrap { margin: 8px -16px 0; padding: 0 16px calc(96px + env(safe-area-inset-bottom, 0px)); overflow: hidden; }
+.deck { position: relative; height: min(68vh, 560px); min-height: 400px; margin: 6px 0 0; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.deck-slot { position: absolute; top: 4px; bottom: 30px; left: 50%; width: min(74vw, 360px); margin-left: calc(min(74vw, 360px) / -2);
+  transition: transform 0.45s var(--ease), opacity 0.3s; transform-origin: 50% 85%; will-change: transform; }
+.deck.dragging .deck-slot { transition: none; }
+.deck-slot .card { height: 100%; aspect-ratio: auto; box-shadow: 0 18px 40px var(--shadow); -webkit-user-drag: none; }
+.deck-slot:not(.front) .card { cursor: pointer; }
+.deck-slot:not(.front) .card::after { content: ''; position: absolute; inset: 0; background: rgba(8, 10, 12, 0.18); pointer-events: none; }
+.deck-slot img { -webkit-user-drag: none; }
+.deck-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 4px 0 8px; }
+.deck-nav .iconbtn:disabled { opacity: 0.35; }
+.deck-dots { display: flex; gap: 6px; }
+.deck-dots i { width: 6px; height: 6px; border-radius: 99px; background: var(--tint-4); transition: width 0.3s var(--ease), background 0.3s; }
+.deck-dots i.on { width: 18px; background: var(--text); }
+.deck-count { font-weight: 700; font-size: 14px; color: var(--muted); }
+@media (min-width: 900px) { .deckwrap { margin: 8px 0 0; padding: 0 0 24px; } .deck-slot { width: 380px; margin-left: -190px; } }
+@media (prefers-reduced-motion: reduce) { .deck-slot { transition: none; } }
