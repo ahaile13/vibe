@@ -3,6 +3,7 @@
 import { Dotted } from './Logo';
 import { useLive } from './LiveProvider';
 import { EventCard } from './EventCard';
+import { Bubbles } from './Bubbles';
 import { SetupNotice } from './AppShell';
 import { isActive } from '@/lib/scoring';
 import type { EventRow } from '@/lib/types';
@@ -26,6 +27,7 @@ export function Trending() {
       [...live].sort((a, b) => (dist(a) ?? 99) - (dist(b) ?? 99)).slice(0, 8)],
   ];
   const shown = sections.filter(([, , l]) => l.length);
+  const bubbles = [...sure].sort(byScore).slice(0, 9);
 
   return (
     <>
@@ -38,6 +40,7 @@ export function Trending() {
           <p>Trends show up once people start rating spots tonight.</p>
         </div>
       )}
+      {bubbles.length > 0 && <Bubbles list={bubbles} />}
       {shown.map(([t, d, l]) => (
         <section className="sec" key={t}>
           <h2><Dotted text={t} /></h2>
