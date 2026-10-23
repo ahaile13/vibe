@@ -131,15 +131,21 @@ export function CityIntro() {
         /* shows again next visit */
       }
       window.scrollTo(0, 0);
+      // Fly into the city: the carousel fades, the camera dives into the skyline, the name streaks
+      // past, a flash, then the app lands with the same skyline settling in behind it.
+      const calm = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       setLeaving(true);
+      const root = document.documentElement;
       setTimeout(() => {
-        document.documentElement.removeAttribute('data-intro');
+        root.removeAttribute('data-intro');
+        root.setAttribute('data-arrive', '1');
         setOpen(false);
+        setTimeout(() => root.removeAttribute('data-arrive'), 1200);
         // First time on this device: a quick word on how vibes works.
         let seen = false;
         try { seen = localStorage.getItem(HOWTO_KEY) === '1'; } catch { /* show it */ }
-        if (!seen) setExplain(ALPHA[i].name);
-      }, 520);
+        if (!seen) setTimeout(() => setExplain(ALPHA[i].name), calm ? 0 : 650);
+      }, calm ? 250 : 1450);
     },
     [chooseCity],
   );
@@ -164,7 +170,14 @@ export function CityIntro() {
   const current = ALPHA[idx];
 
   return (
-    <div className={`intro${leaving ? ' leaving' : ''}`} role="dialog" aria-modal="true" aria-label="Choose your city">
+    <div className={`intro${leaving ? ' flying' : ''}`} role="dialog" aria-modal="true" aria-label="Choose your city">
+      {leaving && (
+        <div className="fly" aria-hidden="true">
+          <div className="fly-streaks" />
+          <div className="fly-name">{current.name}</div>
+          <div className="fly-flash" />
+        </div>
+      )}
       <div className="intro-sky" aria-hidden="true">
         {layers.map((l, i) => (
           <div key={l.k} className={`intro-layer${i < layers.length - 1 ? ' out' : ''}`}>
