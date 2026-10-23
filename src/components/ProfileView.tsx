@@ -2,6 +2,7 @@
 
 import { Dotted } from './Logo';
 import { openCityIntro } from '@/lib/intro';
+import { HowItWorks } from './CityIntro';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -24,6 +25,7 @@ export function ProfileView() {
   const [extra, setExtra] = useState<EventRow[]>([]);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
+  const [howto, setHowto] = useState(false);
 
   // Back from setting a new password.
   useEffect(() => {
@@ -155,7 +157,8 @@ export function ProfileView() {
             <button className="btn gl" onClick={openCityIntro}><Icon name="map" />City: {city.name}</button>
             <button className="btn gl" onClick={openCreate}><Icon name="plus" />Create an event</button>
           </div>
-          <p className="foot-note">Location is checked once each time you rate or post, never tracked in the background, and never shown to anyone.</p>
+          <p className="foot-note">You can rate, comment and post within 1 mile of an event. Location is checked once each time, never tracked in the background, and never shown to anyone. <button className="linkb" onClick={() => setHowto(true)}>How vibes works</button></p>
+          {howto && <HowItWorks onDone={() => setHowto(false)} />}
         </section>
         <section className="panel">
           <h2><Dotted text={'How ranking works'} /></h2>

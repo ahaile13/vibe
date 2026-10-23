@@ -103,6 +103,7 @@ a { color: inherit; text-decoration: none; }
 .wm-c, .mark-c, .amh { font-family: Arial, Helvetica, sans-serif !important; }
 .wm-c { align-self: flex-start; font-size: max(0.14em, 6.5px); font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; line-height: 1; margin: 0.1em 0 0 0.08em; opacity: 0.85; }
 /* titles: the i dot sits a touch lower in heavier heading type */
+.dotted .dw { white-space: nowrap; }
 .dotted .wm-i b { top: 0.06em; width: max(0.17em, 4px); height: max(0.17em, 4px); margin-left: min(-0.085em, -2px); }
 .wm-i b { position: absolute; left: 50%; top: -0.02em; width: 0.17em; height: 0.17em; margin-left: -0.085em; border-radius: 50%; background: var(--accent); animation: breathe 3.2s ease-in-out infinite; }
 @keyframes breathe { 50% { opacity: 0.55; } }
@@ -812,3 +813,12 @@ html[data-intro] .intro { position: fixed; inset: 0; z-index: 90; display: flex;
 .bk-who em, .bk-where em { display: block; font: 800 2.2cqw/1 var(--font-body); font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.7; margin: 0.6cqw 0 1cqw; }
 .bk-who em + br + * { margin-top: 0; }
 .bk-where { grid-column: span 2; background: var(--xi); color: var(--x1); font: 700 2.8cqw/1.3 var(--font-body); text-transform: uppercase; }
+
+/* how vibes works (first city pick) */
+.howto-scrim { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: 20px; background: var(--scrim); animation: fade 0.25s var(--ease); }
+.howto { width: min(100%, 420px); border-radius: 28px; padding: 26px 22px 20px; background: var(--sheet); border: 1px solid var(--line2); box-shadow: 0 30px 80px var(--shadow); animation: sup2 0.35s var(--ease); }
+.howto h2 { margin: 0 0 14px; font: 700 24px/1.15 var(--font-head); letter-spacing: -0.01em; }
+.howto ol { margin: 0 0 20px; padding: 0; list-style: none; counter-reset: how; display: grid; gap: 14px; }
+.howto li { counter-increment: how; position: relative; padding-left: 40px; font-size: 14.5px; line-height: 1.45; color: var(--muted); }
+.howto li b { display: block; color: var(--text); font-size: 15.5px; }
+.howto li::before { content: counter(how); position: absolute; left: 0; top: 1px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 13px; color: var(--accent-ink); background: var(--accent); }

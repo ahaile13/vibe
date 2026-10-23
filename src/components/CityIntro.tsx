@@ -7,6 +7,8 @@ import { Skyline } from './Skyline';
 import { Icon } from './Icon';
 import { INTRO_KEY, INTRO_OPEN } from '@/lib/intro';
 
+const HOWTO_KEY = 'vibes.howto';
+
 const ALPHA = [...CITY_LIST].sort((a, b) => a.name.localeCompare(b.name));
 const indexOf = (id: string) => Math.max(0, ALPHA.findIndex((c) => c.id === id));
 
@@ -19,6 +21,7 @@ export function CityIntro() {
   const { city, chooseCity, theme, setThemeMode } = useLive();
   const [open, setOpen] = useState(true);
   const [leaving, setLeaving] = useState(false);
+  const [explain, setExplain] = useState<string | null>(null);
   const [idx, setIdx] = useState(() => indexOf(city.id));
   const [layers, setLayers] = useState(() => [{ id: ALPHA[indexOf(city.id)].id, k: 0 }]);
   const track = useRef<HTMLDivElement>(null);
@@ -132,6 +135,10 @@ export function CityIntro() {
       setTimeout(() => {
         document.documentElement.removeAttribute('data-intro');
         setOpen(false);
+        // First time on this device: a quick word on how vibes works.
+        let seen = false;
+        try { seen = localStorage.getItem(HOWTO_KEY) === '1'; } catch { /* show it */ }
+        if (!seen) setExplain(ALPHA[i].name);
       }, 520);
     },
     [chooseCity],
@@ -152,6 +159,7 @@ export function CityIntro() {
     (track.current?.children[i] as HTMLElement | undefined)?.focus({ preventScroll: true });
   };
 
+  if (explain) return <HowItWorks city={explain} onDone={() => { try { localStorage.setItem(HOWTO_KEY, '1'); } catch { /* fine */ } setExplain(null); }} />;
   if (!open) return null;
   const current = ALPHA[idx];
 
@@ -196,6 +204,23 @@ export function CityIntro() {
         <button className="intro-go" onClick={() => enter(idx)} aria-label={`Enter ${current.name}`}>
           Tap to enter
         </button>
+      </div>
+    </div>
+  );
+}
+
+/** A quick word on the concept, shown once after the first city pick (and from Profile). */
+export function HowItWorks({ city, onDone }: { city?: string; onDone: () => void }) {
+  return (
+    <div className="howto-scrim" role="dialog" aria-modal="true" aria-labelledby="howto-h" onClick={onDone}>
+      <div className="howto glass" onClick={(e) => e.stopPropagation()}>
+        <h2 id="howto-h">Welcome to vibes{city ? `, ${city}` : ''}</h2>
+        <ol>
+          <li><b>See the vibe live.</b> Spots near you, rated right now: Popping, Mid or Dead, and whether it’s worth it.</li>
+          <li><b>Be within a mile.</b> You can rate, comment and post about an event only when you’re within 1 mile of it. We check once when you post and never show your location.</li>
+          <li><b>Keep it real.</b> Ratings are anonymous and fade after about an hour, so scores always reflect what’s happening now.</li>
+        </ol>
+        <button className="btn hot wide" onClick={onDone} autoFocus>Got it</button>
       </div>
     </div>
   );

@@ -102,7 +102,7 @@ export function Login() {
       <SetupNotice />
       <Logo size={52} />
       <h1><Dotted text={'Know the vibe.'} /></h1>
-      <p>Browse freely. Sign in to rate, comment and post from where you are.</p>
+      <p>Browse freely. Sign in to rate, comment and post when you’re within a mile of an event.</p>
 
       <div className="seg glass" role="group" aria-label="Sign in or create account" style={{ marginBottom: 14 }}>
         <button type="button" aria-pressed={mode === 'signin'} onClick={() => { setMode('signin'); setErr(null); }}>Sign in</button>

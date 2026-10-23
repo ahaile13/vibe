@@ -48,10 +48,10 @@ export function Layers() {
 const GATE: Record<string, { icon: string; title: string; body: (d?: string) => string; retry?: boolean }> = {
   OUTSIDE: {
     icon: '📍',
-    title: 'You have to be there to vibe.',
-    body: (d) => `Only people at this location can rate or post what’s happening.${d ? ` You’re about ${fmtMi(Number(d) / 1609.34)} away.` : ''}`,
+    title: 'Get within a mile to vibe.',
+    body: (d) => `Only people within 1 mile of this event can rate, comment or post.${d ? ` You’re about ${fmtMi(Number(d) / 1609.34)} away.` : ''}`,
   },
-  DENIED: { icon: '🔒', title: 'Location is turned off', body: () => 'VIBES checks your location once to confirm you’re here. Allow location for this site in your browser settings, then try again.', retry: true },
+  DENIED: { icon: '🔒', title: 'Location is turned off', body: () => 'vibes checks your location once to confirm you’re within a mile. Allow location for this site in your browser settings, then try again.', retry: true },
   NOFIX: { icon: '🛰', title: 'No location fix yet', body: () => 'Your phone couldn’t get a location. Step near a door or window and try again.', retry: true },
   UNSUPPORTED: { icon: '🛰', title: 'This browser can’t share location', body: () => 'Open VIBES in Safari or Chrome on your phone to check in.' },
   LOW_ACCURACY: { icon: '🛰', title: 'Location isn’t precise enough', body: (d) => `Your fix is only accurate to about ${d ?? '?'} m. Turn on precise location or step outside for a moment, then try again.`, retry: true },
@@ -267,7 +267,7 @@ function CaptureSheet({ eventId }: { eventId?: string }) {
       <div className="sheet glass" role="dialog" aria-modal="true" aria-labelledby="cap-h">
         <div className="grab" />
         <h2 id="cap-h"><Dotted text={'Capture the vibe'} /></h2>
-        <p className="sub">Posts go live only while you’re at the spot.</p>
+        <p className="sub">You can post while you’re within 1 mile of the spot. It shows up right away.</p>
         {reading ? (
           <div style={{ padding: '30px 0', textAlign: 'center' }}><div className="spin" /></div>
         ) : (

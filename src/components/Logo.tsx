@@ -47,16 +47,25 @@ export function Mark() {
  */
 export function Dotted({ text }: { text: string }) {
   if (!text.includes('i')) return <>{text}</>;
-  const parts = text.split('i');
+  let k = 0;
+  const word = (w: string, wi: number) => {
+    const parts = w.split('i');
+    return (
+      <span key={wi} className="dw">
+        {parts.map((p, j) => (
+          <Fragment key={j}>
+            {p}
+            {j < parts.length - 1 && <span className="wm-i">ı<b style={{ animationDelay: `${(k++ * 0.45) % 3.2}s` }} /></span>}
+          </Fragment>
+        ))}
+      </span>
+    );
+  };
+  const words = text.split(' ');
   return (
     <>
       <span className="dotted" aria-hidden="true">
-        {parts.map((p, k) => (
-          <Fragment key={k}>
-            {p}
-            {k < parts.length - 1 && <span className="wm-i">ı<b style={{ animationDelay: `${(k * 0.45) % 3.2}s` }} /></span>}
-          </Fragment>
-        ))}
+        {words.map((w, wi) => <Fragment key={wi}>{word(w, wi)}{wi < words.length - 1 ? ' ' : ''}</Fragment>)}
       </span>
       <span className="sr">{text}</span>
     </>

@@ -233,7 +233,7 @@ export function EventDetail({ id }: { id: string }) {
           <div className="bignum" style={{ ['--c' as string]: 'var(--quiet)' }}>––</div>
           <div>
             <div className="st">Not enough ratings yet</div>
-            <div style={{ color: 'var(--muted)', fontSize: 13.5, marginTop: 4 }}>{plural(s.n, 'rating')} so far. If you’re here, your rating sets the tone.</div>
+            <div style={{ color: 'var(--muted)', fontSize: 13.5, marginTop: 4 }}>{plural(s.n, 'rating')} so far. If you’re within a mile, your rating sets the tone.</div>
             <span className="conf">{CONF_LABEL[s.conf]}</span>
           </div>
         </div>
@@ -289,7 +289,7 @@ function Comments({ ev }: { ev: EventRow }) {
       <h2><Dotted text={'What people are saying'} /></h2>
       {!all.length ? (
         <p style={{ color: 'var(--muted)', margin: 0 }}>
-          {isActive(ev, now) ? 'No comments yet. If you’re here, say what it’s like in one sentence when you rate.' : 'No comments.'}
+          {isActive(ev, now) ? 'No comments yet. If you’re within a mile, say what it’s like in one sentence when you rate.' : 'No comments.'}
         </p>
       ) : (
         <>

@@ -45,7 +45,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Icon name="plus" />
             Capture the vibe
           </button>
-          <div className="foot">Only people who are there can rate or post. Your exact location is never shown.</div>
+          <div className="foot">Only people within 1 mile of an event can rate or post. Your exact location is never shown.</div>
         </nav>
       )}
       <main className="page">{children}</main>
