@@ -1,5 +1,6 @@
 'use client';
 
+import { assignFlyerStyles } from './Flyer';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
@@ -424,6 +425,9 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   const eventById = useCallback((id: string) => events.find((e) => e.id === id), [events]);
 
   // Events in the selected city. Detail pages still open any event by id.
+  // Give every spot in a city its own flyer style before any card renders.
+  useMemo(() => assignFlyerStyles(events), [events]);
+
   const cityEvents = useMemo(
     () =>
       events.filter(

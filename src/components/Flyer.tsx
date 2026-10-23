@@ -16,7 +16,8 @@ import { Skyline } from './Skyline';
  * so it reads the same as a card, a hero or a thumbnail.
  */
 
-type Style = 'neon' | 'noir' | 'retro' | 'garden' | 'bloom' | 'marquee' | 'zine' | 'swiss';
+type Style = 'neon' | 'noir' | 'retro' | 'garden' | 'bloom' | 'marquee' | 'zine' | 'swiss' | 'pixel' | 'gala' | 'memphis' | 'sepia' | 'glitter' | 'block';
+const ALL_STYLES: Style[] = ['neon', 'noir', 'retro', 'garden', 'bloom', 'marquee', 'zine', 'swiss', 'pixel', 'gala', 'memphis', 'sepia', 'glitter', 'block'];
 type Motif =
   | 'pumpkin' | 'disco' | 'flute' | 'pancakes' | 'martini' | 'beer' | 'wine' | 'coffee' | 'sax' | 'guitar' | 'mic' | 'vinyl'
   | 'basketball' | 'football' | 'baseball' | 'taco' | 'pizza' | 'cactus' | 'hat' | 'mountain' | 'sun' | 'palm' | 'art' | 'lantern';
@@ -38,6 +39,12 @@ const PAL: Record<Style, [string, string, string, string, string][]> = {
   marquee: [['#4a0d14', '#1a0306', '#ffe7a3', '#ffb11b', '#fff6dd'], ['#0f2240', '#050b16', '#fff1c4', '#ffcc33', '#f6f3ea'], ['#123b2a', '#04140d', '#fff2c9', '#ffbf3c', '#f3fbf5'], ['#2b1240', '#0d0414', '#ffe9b5', '#ff9f43', '#fbf2ff']],
   zine: [['#f3efe6', '#f3efe6', '#ff2e88', '#ffe600', '#111111'], ['#efeee9', '#efeee9', '#00d084', '#ff5a1f', '#111111'], ['#f1ece2', '#f1ece2', '#3b5bff', '#ff2e2e', '#111111'], ['#f4f0e8', '#f4f0e8', '#ff7a00', '#7c4dff', '#111111']],
   swiss: [['#ff4f1f', '#ff4f1f', '#111111', '#ffffff', '#111111'], ['#1546ff', '#1546ff', '#ffffff', '#ffd400', '#ffffff'], ['#f5e9d6', '#f5e9d6', '#e3262e', '#111111', '#111111'], ['#0f0f0f', '#0f0f0f', '#c8ff00', '#ffffff', '#ffffff']],
+  pixel: [['#1b1035', '#0a0616', '#ff5ec4', '#3cf2ff', '#fefefe'], ['#0d2b1a', '#04110a', '#ffe14a', '#4dff88', '#f2fff6'], ['#2a0f0f', '#0f0404', '#ffb000', '#ff4d4d', '#fff4e6'], ['#0b1e3a', '#030b18', '#ff8a00', '#7cd3ff', '#eef7ff']],
+  gala: [['#0e1b2b', '#0e1b2b', '#d9b26a', '#9aa7b8', '#f4efe4'], ['#f6f1e7', '#f6f1e7', '#a8843e', '#6b6b6b', '#1d1d1d'], ['#2a0f1e', '#2a0f1e', '#e6c27a', '#c79aa8', '#fbf3ec'], ['#13281f', '#13281f', '#d6b56b', '#9fb8a8', '#f3f0e6']],
+  memphis: [['#ffd23f', '#ffd23f', '#ff3c7e', '#3a86ff', '#141414'], ['#7af0c9', '#7af0c9', '#ff6b35', '#6a4cff', '#141414'], ['#ff9ec7', '#ff9ec7', '#1d3fff', '#ffe600', '#141414'], ['#b5e2ff', '#b5e2ff', '#ff4747', '#00b37e', '#141414']],
+  sepia: [['#efe2c6', '#d9c49c', '#4a2f1a', '#8c2f1f', '#3a2614'], ['#ece4d4', '#cdbd9e', '#2f2a24', '#6b4a2b', '#2b241c'], ['#f0e0c8', '#d6b98f', '#5a2a1a', '#2f4a5a', '#3a2214'], ['#e9e2cf', '#c9bc9a', '#3b3020', '#7a5a1e', '#2e2618']],
+  glitter: [['#2b1d00', '#070500', '#ffd76a', '#ffb3d1', '#fff6dd'], ['#1d0b2b', '#07020c', '#e4c3ff', '#ffd76a', '#fbf4ff'], ['#001f2b', '#00080c', '#9ff0ff', '#ffd76a', '#effcff'], ['#2b0010', '#0c0004', '#ffc3a8', '#ffd76a', '#fff2ec']],
+  block: [['#fff6ea', '#ff5d3a', '#1f3cff', '#ffc93c', '#161616'], ['#f2f7ff', '#00a37a', '#ff4f8b', '#ffd23f', '#141414'], ['#fff2f7', '#7a3cff', '#ff8a00', '#3cd3ad', '#141414'], ['#f6fff2', '#ff3d3d', '#2f6bff', '#ffd400', '#141414']],
 };
 
 const DJS = ['DJ Nova', 'DJ Kairo', 'DJ Lux', 'DJ Solace', 'DJ Marz', 'DJ Vela', 'DJ Rome', 'DJ Tempo', 'DJ Saint', 'DJ Blaze', 'DJ Onyx', 'DJ Sable', 'DJ Juno', 'DJ Remy', 'DJ Atlas', 'DJ Coco', 'DJ Ivory', 'DJ Echo', 'DJ Kenji', 'DJ Reign', 'DJ Halo', 'DJ Mako', 'DJ Rio', 'DJ Zara'];
@@ -98,18 +105,68 @@ function motifFor(e: EventRow, city: City | null, day: boolean, month: number, d
   }
 }
 
-function styleFor(e: EventRow, day: boolean, seed: string): Style {
-  const opts: Record<string, [Style[], Style[]]> = {
-    Clubs: [['retro', 'zine', 'swiss'], ['neon', 'noir', 'marquee', 'zine', 'swiss']],
-    Parties: [['retro', 'bloom', 'zine', 'swiss'], ['neon', 'marquee', 'zine', 'noir']],
-    Bars: [['retro', 'garden', 'swiss', 'zine'], ['noir', 'neon', 'retro', 'marquee', 'swiss']],
-    Restaurants: [['garden', 'noir', 'bloom', 'swiss'], ['garden', 'noir', 'marquee']],
-    Concerts: [['retro', 'zine', 'swiss'], ['neon', 'marquee', 'zine', 'noir']],
-    Events: [['bloom', 'retro', 'garden', 'swiss', 'zine'], ['retro', 'neon', 'marquee']],
-    Sports: [['retro', 'swiss', 'zine'], ['neon', 'retro', 'swiss', 'marquee']],
+/** Styles in order of fit for a spot: the ones that suit its category and time of day first. */
+function preferred(e: EventRow, day: boolean, seed: string): Style[] {
+  const fit: Record<string, [Style[], Style[]]> = {
+    Clubs: [['memphis', 'retro', 'zine', 'block', 'pixel', 'swiss'], ['neon', 'glitter', 'noir', 'marquee', 'pixel', 'zine']],
+    Parties: [['memphis', 'retro', 'bloom', 'zine', 'block'], ['glitter', 'neon', 'marquee', 'pixel', 'zine', 'memphis']],
+    Bars: [['retro', 'garden', 'block', 'memphis', 'swiss'], ['noir', 'gala', 'neon', 'marquee', 'sepia', 'retro']],
+    Restaurants: [['garden', 'bloom', 'gala', 'block', 'swiss'], ['gala', 'noir', 'garden', 'sepia', 'marquee']],
+    Concerts: [['retro', 'zine', 'pixel', 'swiss', 'memphis'], ['sepia', 'marquee', 'neon', 'zine', 'noir', 'glitter']],
+    Events: [['bloom', 'block', 'memphis', 'retro', 'garden', 'swiss'], ['marquee', 'retro', 'neon', 'glitter', 'pixel']],
+    Sports: [['block', 'retro', 'swiss', 'memphis', 'pixel'], ['neon', 'pixel', 'retro', 'block', 'swiss', 'marquee']],
   };
-  const [d, n] = opts[e.category] ?? [['bloom', 'retro', 'swiss'], ['neon', 'noir', 'marquee']];
-  return pick(day ? d : n, `${seed}:style`);
+  const [d, n] = fit[e.category] ?? fit.Events;
+  const head = day ? d : n;
+  const k = hash(`${seed}:style`) % head.length;
+  const rest = ALL_STYLES.filter((s) => !head.includes(s)).sort((a, b) => hash(seed + a) - hash(seed + b));
+  return [...head.slice(k), ...head.slice(0, k), ...rest];
+}
+
+function styleFor(e: EventRow, day: boolean, seed: string): Style {
+  return SLOTS.get(seed) ?? preferred(e, day, seed)[0];
+}
+
+/**
+ * Hands out poster styles city by city so no two spots in the same city share one (14 styles,
+ * about 10 spots a city). Each spot gets the best-fitting style that is still free. Called by the
+ * live store whenever the event list changes; flyers fall back to their own pick before that.
+ */
+const SLOTS = new Map<string, Style>();
+export function assignFlyerStyles(events: EventRow[]) {
+  const byCity = new Map<string, Map<string, EventRow>>();
+  for (const e of events) {
+    const c = nearestCity(e)?.id ?? 'none';
+    const seed = e.venue_id ?? e.name;
+    if (!byCity.has(c)) byCity.set(c, new Map());
+    if (!byCity.get(c)!.has(seed)) byCity.get(c)!.set(seed, e);
+  }
+  SLOTS.clear();
+  for (const spots of byCity.values()) {
+    let used = new Set<Style>();
+    const order = [...spots.entries()].sort(([a], [b]) => hash(a) - hash(b));
+    for (const [seed, e] of order) {
+      if (used.size >= ALL_STYLES.length) used = new Set();
+      const st = preferred(e, new Date(e.starts_at).getHours() < 15, seed).find((s) => !used.has(s))!;
+      used.add(st);
+      SLOTS.set(seed, st);
+    }
+  }
+}
+
+/** Shift a palette color's hue (per city, so the same style reads differently city to city). */
+function shiftHue(hex: string, deg: number) {
+  const n = parseInt(hex.slice(1), 16);
+  let r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2;
+  if (max === min) return hex;
+  const d = max - min, s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  h = (((h * 60 + deg) % 360) + 360) % 360 / 360;
+  const f = (p: number, q: number, t: number) => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; };
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+  [r, g, b] = [f(p, q, h + 1 / 3), f(p, q, h), f(p, q, h - 1 / 3)];
+  return `#${[r, g, b].map((v) => Math.round(v * 255).toString(16).padStart(2, '0')).join('')}`;
 }
 
 function details(e: EventRow) {
@@ -145,11 +202,14 @@ export const flyerStyle = (e: EventRow): Style => styleFor(e, new Date(e.starts_
 export function Flyer({ event }: { event: EventRow }) {
   const x = details(event);
   const style = styleFor(event, x.day, x.seed);
-  const pal = pick(PAL[style], `${x.seed}:pal`);
+  // Palette: one of the style's four, hue-shifted per city so no two cities' versions match.
+  const ci = x.city ? CITY_LIST.indexOf(x.city) : 0;
+  const shift = ci === 8 ? 0 : (ci * 47 + (hash(`${x.seed}:hue`) % 24) - 12) % 360;
+  const pal = pick(PAL[style], `${x.seed}:pal`).map((c) => shiftHue(c, shift));
   const motif = motifFor(event, x.city, x.day, x.month, x.date, x.seed);
   const variant = hash(`${x.seed}:var`) % 2;
   const vars = { '--x1': pal[0], '--x2': pal[1], '--xa': pal[2], '--xb': pal[3], '--xi': pal[4] } as CSSProperties;
-  const Art = { neon: Neon, noir: Noir, retro: Retro, garden: Garden, bloom: Bloom, marquee: Marquee, zine: Zine, swiss: Swiss }[style];
+  const Art = { neon: Neon, noir: Noir, retro: Retro, garden: Garden, bloom: Bloom, marquee: Marquee, zine: Zine, swiss: Swiss, pixel: Pixel, gala: Gala, memphis: Memphis, sepia: Sepia, glitter: Glitter, block: Block }[style];
   return (
     <div className={`art flyer fx fx-${style} fv${variant}`} style={vars} aria-hidden="true">
       <div className="fx-bg" />
@@ -338,6 +398,144 @@ function Swiss({ e, x, m }: Props) {
       </div>
       <T c="sw-foot"><span>{x.sub}</span><span>{x.perks[0]}</span><span>vibes</span></T>
     </>
+  );
+}
+
+// ---------------------------------------------------------------- pixel: 8-bit arcade
+const SPRITES = {
+  heart: ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'],
+  star: ['...X...', '..XXX..', 'XXXXXXX', '.XXXXX.', '.XX.XX.', 'X.....X'],
+  invader: ['..X...X..', '...X.X...', '..XXXXX..', '.XX.X.XX.', 'XXXXXXXXX', 'X.XXXXX.X', 'X.X...X.X', '...X.X...'],
+  coin: ['..XXX..', '.XXXXX.', 'XXX.XXX', 'XXX.XXX', 'XXX.XXX', '.XXXXX.', '..XXX..'],
+  bolt: ['....XX', '...XX.', '..XXXX', '.XXXX.', '...XX.', '..XX..', '.XX...'],
+};
+function Sprite({ seed }: { seed: string }) {
+  const rows = pick(Object.values(SPRITES), `${seed}:sprite`);
+  return (
+    <svg viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges">
+      {rows.flatMap((r, y) => r.split('').map((c, xx) => (c === 'X' ? <rect key={`${xx}-${y}`} x={xx} y={y} width="1.02" height="1.02" fill={(xx + y) % 5 === 0 ? 'var(--xb)' : 'var(--xa)'} /> : null)))}
+    </svg>
+  );
+}
+function Pixel({ e, x }: Props) {
+  return (
+    <>
+      <div className="px-grid" />
+      <T c="px-pre">★ player one ★ {x.city?.name ?? ''}</T>
+      <T c="px-title" style={fit(e.name, 13, 0.62)}>{e.name}</T>
+      <T c="px-sub">{x.sub} · level {x.date}</T>
+      <div className="px-art"><Sprite seed={x.seed} /></div>
+      <T c="px-start">press start · {x.start}</T>
+      <T c="px-score"><span>P1 {x.djs[0]}</span><span>P2 {x.djs[1]}</span></T>
+      <T c="px-hi">hi-score: {x.perks[0]}</T>
+      <T c="px-foot">{x.weekday} {x.mon} {x.date} · {x.where}{x.cityName ? ` · ${x.cityName}` : ''}</T>
+    </>
+  );
+}
+
+// ---------------------------------------------------------------- gala: minimal black-tie invitation
+function Gala({ e, x, m }: Props) {
+  return (
+    <>
+      <div className="ga2-frame" />
+      <div className="ga2-art">{m}</div>
+      <T c="ga2-pre">You are invited to</T>
+      <T c="ga2-title" style={fit(e.name, 10, 0.72, 76)}>{e.name}</T>
+      <div className="ga2-rule"><i /></div>
+      <T c="ga2-date">{x.weekday}, the {x.date}{x.nth} of {x.mon}</T>
+      <T c="ga2-time">{x.time}</T>
+      <T c="ga2-perk">{x.perks[0]} · music by {x.djs[0]}</T>
+      <T c="ga2-foot">{x.where}{x.cityName ? <><br />{x.cityName}</> : null}<br /><b>RSVP on vibes</b></T>
+    </>
+  );
+}
+
+// ---------------------------------------------------------------- memphis: bold pattern party
+function Memphis({ e, x, m }: Props) {
+  const shapes: ReactNode[] = [];
+  for (let i = 0; i < 16; i++) {
+    const h = hash(`${x.seed}:shape${i}`);
+    const cx = h % 100, cy = (h >>> 7) % 125, rot = (h >>> 3) % 360, kind = (h >>> 11) % 5;
+    const col = ['var(--xa)', 'var(--xb)', 'var(--xi)'][(h >>> 5) % 3];
+    shapes.push(
+      <g key={i} transform={`translate(${cx} ${cy}) rotate(${rot})`}>
+        {kind === 0 && <circle r="3" fill={col} />}
+        {kind === 1 && <path d="M-4 3 L0 -4 L4 3 Z" fill={col} />}
+        {kind === 2 && <path d="M-6 0 C -4 -3 -2 3 0 0 C 2 -3 4 3 6 0" stroke={col} strokeWidth="1.2" fill="none" />}
+        {kind === 3 && <rect x="-3" y="-3" width="6" height="6" fill="none" stroke={col} strokeWidth="1.2" />}
+        {kind === 4 && <path d="M-6 0 L-3 -3 L0 0 L3 -3 L6 0" stroke={col} strokeWidth="1.2" fill="none" />}
+      </g>,
+    );
+  }
+  return (
+    <>
+      <svg className="mp-shapes" viewBox="0 0 100 125" preserveAspectRatio="xMidYMid slice">{shapes}</svg>
+      <T c="mp-pre">{x.city?.name ?? 'vibes'} presents</T>
+      <T c="mp-title" style={fit(e.name, 14, 0.62)}><span>{e.name}</span></T>
+      <div className="mp-sticker">{m}</div>
+      <div className="mp-pills">
+        <T c="mp-pill a">{x.weekday} {x.mon} {x.date}</T>
+        <T c="mp-pill b">{x.time}</T>
+        <T c="mp-pill c">{x.djs[0]} + {x.djs[1]}</T>
+        <T c="mp-pill d">{x.perks[0]}</T>
+      </div>
+      <T c="mp-foot">{x.where}{x.cityName ? ` · ${x.cityName}` : ''}</T>
+    </>
+  );
+}
+
+// ---------------------------------------------------------------- sepia: classical concert bill
+function Sepia({ e, x, m }: Props) {
+  return (
+    <>
+      <div className="se-paper" />
+      <div className="se-border"><i /><i /><i /><i /></div>
+      <T c="se-pre">{x.day ? 'An afternoon of' : 'An evening of'}</T>
+      <T c="se-title" style={fit(e.name, 11, 0.6, 70)}>{e.name}</T>
+      <T c="se-orn">❦</T>
+      <div className="se-art">{m}</div>
+      <T c="se-feat"><em>featuring</em>{x.djs.join(' ✦ ')}</T>
+      <T c="se-date">{x.weekday} · {x.mon} {x.date}{x.nth} · {x.start}</T>
+      <T c="se-perk">{x.perks[0]}</T>
+      <T c="se-foot">{x.where}{x.cityName ? ` · ${x.cityName}` : ''}</T>
+    </>
+  );
+}
+
+// ---------------------------------------------------------------- glitter: confetti celebration
+function Glitter({ e, x, m }: Props) {
+  const bits: ReactNode[] = [];
+  for (let i = 0; i < 46; i++) {
+    const h = hash(`${x.seed}:cf${i}`);
+    const cx = h % 100, cy = (h >>> 7) % 125, rot = (h >>> 3) % 180, w = 1 + ((h >>> 13) % 3), dot = (h >>> 9) % 3 === 0;
+    const col = ['var(--xa)', 'var(--xb)', 'var(--xi)'][(h >>> 5) % 3];
+    bits.push(dot ? <circle key={i} cx={cx} cy={cy} r={w * 0.35} fill={col} /> : <rect key={i} x={cx} y={cy} width={w} height={w * 0.45} fill={col} transform={`rotate(${rot} ${cx} ${cy})`} />);
+  }
+  return (
+    <>
+      <svg className="gl-confetti" viewBox="0 0 100 125" preserveAspectRatio="xMidYMid slice">{bits}</svg>
+      <T c="gl-pre">Let’s celebrate</T>
+      <T c="gl-title" style={fit(e.name, 17, 0.42)}>{e.name}</T>
+      <T c="gl-ribbon">{x.weekday} · {x.mon} {x.date} · {x.start}</T>
+      <div className="gl-art">{m}</div>
+      <T c="gl-djs">{x.djs[0]} · {x.djs[1]} · {x.djs[2]}</T>
+      <T c="gl-perk">{x.perks[0]} · {x.perks[1]}</T>
+      <T c="gl-foot">{x.where}{x.cityName ? ` · ${x.cityName}` : ''} · RSVP on vibes</T>
+    </>
+  );
+}
+
+// ---------------------------------------------------------------- block: color-block grid
+function Block({ e, x, m }: Props) {
+  return (
+    <div className="bk-grid">
+      <T c="bk-cell bk-title"><small>{x.city?.name ?? 'vibes'} · {x.sub}</small><span style={fit(e.name, 9, 0.6, 72)}>{e.name}</span></T>
+      <T c="bk-cell bk-date"><b>{x.date}</b>{x.mon} · {x.weekday.slice(0, 3)}</T>
+      <T c="bk-cell bk-time"><b>{x.start}</b>till {x.time.split('– ')[1]}</T>
+      <div className="bk-cell bk-art">{m}</div>
+      <T c="bk-cell bk-who"><em>Who</em>{x.djs[0]}<br />{x.djs[1]}<em>Perk</em>{x.perks[0]}</T>
+      <T c="bk-cell bk-where"><em>Where</em>{x.where}{x.cityName ? ` · ${x.cityName}` : ''}</T>
+    </div>
   );
 }
 
